@@ -1,18 +1,18 @@
 package com.pointlessapps.mypremiummobile.compose.ui.components
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 internal fun ComposeScaffoldLayout(
+    modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
-    fab: @Composable () -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit,
+    content: @Composable ColumnScope.(PaddingValues) -> Unit,
 ) {
-    SubcomposeLayout(modifier = Modifier.imePadding()) { constraints ->
+    SubcomposeLayout { constraints ->
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
 
@@ -23,29 +23,27 @@ internal fun ComposeScaffoldLayout(
                 it.measure(looseConstraints)
             }
 
-            val topBarHeight = topBarPlaceables.maxByOrNull { it.height }?.height ?: 0
-
-            val fabPlaceables = subcompose(ComposeScaffoldLayoutContent.Fab, fab)
-                .mapNotNull { measurable ->
-                    measurable.measure(looseConstraints).takeIf { it.height != 0 && it.width != 0 }
-                }
-
-            val fabHeight = fabPlaceables.maxByOrNull { it.height }?.height ?: 0
+            val topBarHeight = topBarPlaceables.maxByOrNull { it.height }?.height
 
             val bodyContentPlaceables = subcompose(ComposeScaffoldLayoutContent.Content) {
-                content(
-                    PaddingValues(
-                        top = topBarHeight.toDp(),
-                        bottom = fabHeight.toDp(),
-                    ),
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(modifier),
+                    content = {
+                        content(
+                            PaddingValues(
+                                top = (topBarHeight ?: WindowInsets.statusBars.getTop(
+                                    LocalDensity.current,
+                                )).toDp(),
+                            ),
+                        )
+                    },
                 )
             }.map { it.measure(looseConstraints.copy(maxHeight = layoutHeight)) }
 
             bodyContentPlaceables.forEach { it.place(0, 0) }
             topBarPlaceables.forEach { it.place(0, 0) }
-            fabPlaceables.forEach { fab ->
-                fab.place(0, layoutHeight - fabHeight)
-            }
         }
     }
 }

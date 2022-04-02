@@ -14,6 +14,9 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/datasource" />
             <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/errors" />
+            <option value="$PROJECT_DIR$/http" />
+            <option value="$PROJECT_DIR$/remote_datasource" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

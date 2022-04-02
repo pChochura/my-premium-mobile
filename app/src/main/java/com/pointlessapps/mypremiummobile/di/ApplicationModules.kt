@@ -1,5 +1,8 @@
 package com.pointlessapps.mypremiummobile.di
 
-import org.koin.core.module.Module
+import com.pointlessapps.mypremiummobile.compose.login.di.loginModule
 
-val applicationModules = emptyList<Module>()
+val applicationModules = listOf(
+    applicationModule,
+    loginModule,
+)

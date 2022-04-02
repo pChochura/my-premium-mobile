@@ -105,5 +105,10 @@ dependencies {
 
     implementation(Compose.NavigationReimagined)
 
+    implementation(Timber.dependency)
+
     implementation(project(":domain"))
+    implementation(project(":http"))
+    implementation(project(":errors"))
+    implementation(project(":remote_datasource"))
 }

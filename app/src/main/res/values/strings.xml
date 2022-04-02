@@ -1,3 +1,15 @@
 <resources>
 	<string name="app_name">My Premium Mobile</string>
+	<string name="login_or_phone_number">Login or phone number</string>
+	<string name="enter_your_login">Enter your login…</string>
+	<string name="password">Password</string>
+	<string name="enter_your_password">Enter your password…</string>
+	<string name="login">Login</string>
+	<string name="first_login">First login</string>
+	<string name="incorrect_login_or_phone_number">Incorrect login or phone number</string>
+	<string name="incorrect_password">Incorrect password</string>
+	<string name="incorrect_login_or_password">Incorrect login or password. Please try again</string>
+	<string name="something_went_wrong">Something went wrong. Please try again</string>
+	<string name="the_provided_value_is_incorrect">The provided value is incorrect</string>
+	<string name="toggle_password_visibility">Toggle password visiblity</string>
 </resources>

@@ -12,7 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.zIndex
+import com.pointlessapps.mypremiummobile.R
 
 private const val SCRIM_ALPHA = 0.9f
 
@@ -43,7 +45,7 @@ internal fun ComposeLoader(enabled: Boolean) {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = MaterialTheme.colors.onPrimary,
+                    color = colorResource(id = R.color.accent),
                 )
             }
         }

@@ -43,26 +43,18 @@ private fun typography() = Typography(
     defaultFontFamily = fontFamily,
     h1 = TextStyle(
         fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-    ),
-    h2 = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-    ),
-    h3 = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 18.sp,
+        fontSize = 32.sp,
     ),
     button = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
     ),
     body1 = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
     ),
-    subtitle1 = TextStyle(
-        fontWeight = FontWeight.Light,
+    caption = TextStyle(
+        fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
     ),
 )
@@ -75,12 +67,12 @@ private fun shapes() = Shapes(
 
 @Composable
 private fun lightColorPalette() = lightColors(
-    primary = colorResource(id = R.color.white),
-    onPrimary = colorResource(id = R.color.black),
-    secondary = colorResource(id = R.color.black),
-    onSecondary = colorResource(id = R.color.white),
-    background = colorResource(id = R.color.white),
+    primary = colorResource(id = R.color.almost_black),
+    onPrimary = colorResource(id = R.color.white),
+    background = colorResource(id = R.color.light_grey),
     onBackground = colorResource(id = R.color.black),
+    surface = colorResource(id = R.color.white),
+    onSurface = colorResource(id = R.color.black),
 )
 
 @Composable

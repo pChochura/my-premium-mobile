@@ -60,3 +60,26 @@ object Koin {
     const val android = "io.insert-koin:koin-android:$version"
     const val core = "io.insert-koin:koin-core:$version"
 }
+
+object Retrofit {
+    private const val version = "2.9.0"
+    const val dependency = "com.squareup.retrofit2:retrofit:$version"
+    const val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"
+}
+
+object OkHttp {
+    private const val version = "4.9.3"
+    const val bomDependency = "com.squareup.okhttp3:okhttp-bom:$version"
+    const val okhttp = "com.squareup.okhttp3:okhttp"
+    const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor"
+}
+
+object Timber {
+    private const val version = "5.0.1"
+    const val dependency = "com.jakewharton.timber:timber:$version"
+}
+
+object Gson {
+    private const val version = "2.9.0"
+    const val dependency = "com.google.code.gson:gson:$version"
+}

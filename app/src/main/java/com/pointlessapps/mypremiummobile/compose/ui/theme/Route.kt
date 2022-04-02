@@ -5,5 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 internal sealed interface Route : Parcelable {
     @Parcelize
-    object Home : Route
+    object Login : Route
+
+    @Parcelize
+    object Dashboard : Route
 }

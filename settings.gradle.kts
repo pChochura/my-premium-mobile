@@ -21,5 +21,8 @@ rootProject.name = "my-premium-mobile"
 include(
     ":app",
     ":domain",
+    ":http",
+    ":errors",
     ":datasource",
+    ":remote_datasource",
 )

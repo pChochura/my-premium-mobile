@@ -1,5 +1,9 @@
 package com.pointlessapps.mypremiummobile.domain.di
 
-import org.koin.core.module.Module
+import com.pointlessapps.mypremiummobile.domain.auth.di.authModule
+import com.pointlessapps.mypremiummobile.domain.validation.di.validationModule
 
-val domainModules = emptyList<Module>()
+val domainModules = listOf(
+    authModule,
+    validationModule,
+)
