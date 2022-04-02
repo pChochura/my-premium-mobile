@@ -48,4 +48,5 @@ dependencies {
     implementation(Retrofit.gsonConverter)
 
     implementation(project(":errors"))
+    implementation(project(":datasource"))
 }

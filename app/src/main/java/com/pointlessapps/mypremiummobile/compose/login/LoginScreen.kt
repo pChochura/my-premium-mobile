@@ -112,12 +112,12 @@ internal fun LoginScreen(
                 ),
             )
 
-            ComposeButton(
-                modifier = Modifier.fillMaxWidth(LOGO_WIDTH_RATIO),
-                text = stringResource(id = R.string.first_login),
-                onClick = viewModel::onFirstLoginClicked,
-                buttonStyle = outlinedComposeButtonModel(),
-            )
+            // ComposeButton(
+            //    modifier = Modifier.fillMaxWidth(LOGO_WIDTH_RATIO),
+            //    text = stringResource(id = R.string.first_login),
+            //    onClick = viewModel::onFirstLoginClicked,
+            //    buttonStyle = outlinedComposeButtonModel(),
+            // )
 
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.big_padding)))
         }

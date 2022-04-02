@@ -5,6 +5,7 @@
       <module name="my-premium-mobile.app" target="11" />
       <module name="my-premium-mobile.buildSrc" target="11" />
       <module name="my-premium-mobile.http" target="11" />
+      <module name="my-premium-mobile.remote_datasource" target="11" />
       <module name="MyPremiumMobile.buildSrc" target="11" />
       <module name="project-template.app" target="11" />
       <module name="project-template.buildSrc" target="11" />

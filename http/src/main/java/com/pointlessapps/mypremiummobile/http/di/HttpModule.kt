@@ -3,8 +3,11 @@ package com.pointlessapps.mypremiummobile.http.di
 import com.google.gson.Gson
 import com.pointlessapps.mypremiummobile.http.BASE_URL_PROPERTY_KEY
 import com.pointlessapps.mypremiummobile.http.LOG_LEVEL_PROPERTY_KEY
+import com.pointlessapps.mypremiummobile.http.authorization.AuthorizationInterceptor
+import com.pointlessapps.mypremiummobile.http.authorization.SessionCookieJar
 import com.pointlessapps.mypremiummobile.http.errors.ErrorCallAdapterFactory
 import com.pointlessapps.mypremiummobile.http.logger.TimberLogger
+import okhttp3.CookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.error.MissingPropertyException
@@ -32,9 +35,22 @@ val httpModule = module {
         }
     }
 
+    single<CookieJar> {
+        SessionCookieJar()
+    }
+
+    single {
+        AuthorizationInterceptor(
+            authorizationTokenStore = get(),
+            gson = Gson(),
+        )
+    }
+
     single {
         OkHttpClient.Builder()
             .addInterceptor(get<HttpLoggingInterceptor>())
+            .addInterceptor(get<AuthorizationInterceptor>())
+            .cookieJar(get())
             .build()
     }
 
@@ -46,7 +62,7 @@ val httpModule = module {
         ErrorCallAdapterFactory(Gson())
     }
 
-    single<Retrofit> {
+    single {
         Retrofit.Builder()
             .client(get())
             .baseUrl(getProperty<String>(BASE_URL_PROPERTY_KEY))

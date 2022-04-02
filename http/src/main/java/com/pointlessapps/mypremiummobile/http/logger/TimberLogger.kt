@@ -9,6 +9,6 @@ internal class TimberLogger : HttpLoggingInterceptor.Logger {
     }
 
     private companion object {
-        private const val TAG = "AUDI_D_APP_HTTP"
+        private const val TAG = "MY_PREMIUM_MOBILE_HTTP"
     }
 }

@@ -1,11 +1,13 @@
 package com.pointlessapps.mypremiummobile.remote.datasource.auth
 
 import com.pointlessapps.mypremiummobile.datasource.auth.AuthDatasource
+import com.pointlessapps.mypremiummobile.datasource.auth.AuthorizationTokenStore
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.LoginBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.mapper.toLoginResponseDto
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.service.AuthService
 
 internal class AuthDatasourceImpl(
+    private val authorizationTokenStore: AuthorizationTokenStore,
     private val authService: AuthService,
 ) : AuthDatasource {
 
@@ -14,7 +16,8 @@ internal class AuthDatasourceImpl(
             username = login,
             password = password,
         ),
-    ).toLoginResponseDto()
+    ).also { authorizationTokenStore.setToken(it.token) }
+        .toLoginResponseDto()
 
     override suspend fun logout() = authService.logout()
 }
