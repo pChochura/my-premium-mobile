@@ -23,7 +23,7 @@ internal fun NavHost(navController: NavController<Route>) {
                 onShowLogin = {
                     navController.popAll()
                     navController.navigate(Route.Login)
-                }
+                },
             )
         }
     }
