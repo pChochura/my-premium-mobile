@@ -11,5 +11,12 @@
 	<string name="incorrect_login_or_password">Incorrect login or password. Please try again</string>
 	<string name="something_went_wrong">Something went wrong. Please try again</string>
 	<string name="the_provided_value_is_incorrect">The provided value is incorrect</string>
-	<string name="toggle_password_visibility">Toggle password visiblity</string>
+	<string name="toggle_password_visibility">Toggle password visibility</string>
+	<string name="show_payments_details">Show payments details</string>
+	<string name="account_balance">Account balance</string>
+	<string name="account_balance_value">%s zł</string>
+	<string name="billing_period">Billing period</string>
+	<string name="account_number">Account number</string>
+	<string name="billing_period_value">%s. day of the month</string>
+	<string name="your_offer">Your offer</string>
 </resources>

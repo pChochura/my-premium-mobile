@@ -45,6 +45,10 @@ private fun typography() = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 32.sp,
     ),
+    h3 = TextStyle(
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+    ),
     button = TextStyle(
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,

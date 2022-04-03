@@ -3,10 +3,10 @@ package com.pointlessapps.mypremiummobile.compose.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -33,21 +33,18 @@ internal fun ComposeLoader(enabled: Boolean) {
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
-        Surface(
+        Box(
             modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.surface.copy(alpha = SCRIM_ALPHA))
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .imePadding(),
-            color = MaterialTheme.colors.surface.copy(
-                alpha = SCRIM_ALPHA,
-            ),
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = colorResource(id = R.color.accent),
-                )
-            }
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = colorResource(id = R.color.accent),
+            )
         }
     }
 }

@@ -10,8 +10,12 @@
 	<dimen name="button_default_elevation">2dp</dimen>
 	<dimen name="button_pressed_elevation">4dp</dimen>
 
+	<dimen name="tiny_padding">4dp</dimen>
 	<dimen name="small_padding">8dp</dimen>
 	<dimen name="medium_padding">16dp</dimen>
 	<dimen name="big_padding">32dp</dimen>
 	<dimen name="huge_padding">64dp</dimen>
+
+	<dimen name="icon_button_size">32dp</dimen>
+	<dimen name="icon_size">24dp</dimen>
 </resources>

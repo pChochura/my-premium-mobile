@@ -1,8 +1,7 @@
 package com.pointlessapps.mypremiummobile.domain.auth
 
 import com.pointlessapps.mypremiummobile.datasource.auth.AuthDatasource
-import com.pointlessapps.mypremiummobile.domain.auth.mapper.toLoginResponse
-import com.pointlessapps.mypremiummobile.domain.auth.model.LoginResponse
+import com.pointlessapps.mypremiummobile.datasource.auth.dto.LoginResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,7 +18,7 @@ internal class AuthRepositoryImpl(
 ) : AuthRepository {
 
     override fun login(login: String, password: String) = flow {
-        emit(authDatasource.login(login, password).toLoginResponse())
+        emit(authDatasource.login(login, password))
     }.flowOn(Dispatchers.IO)
 
     override fun logout() = flow {

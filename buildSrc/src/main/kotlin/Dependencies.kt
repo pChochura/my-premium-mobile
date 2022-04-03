@@ -4,7 +4,6 @@ object Kotlin {
     const val parcelizePlugin = "kotlin-parcelize"
     const val androidPlugin = "kotlin-android"
     const val javaPlugin = "kotlin"
-    const val annotationProcessor = "kotlin-kapt"
 
     object Coroutines {
         private const val version = "1.6.0"

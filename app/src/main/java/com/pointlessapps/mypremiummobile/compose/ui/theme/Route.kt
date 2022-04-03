@@ -1,6 +1,7 @@
 package com.pointlessapps.mypremiummobile.compose.ui.theme
 
 import android.os.Parcelable
+import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import kotlinx.parcelize.Parcelize
 
 internal sealed interface Route : Parcelable {
@@ -8,5 +9,5 @@ internal sealed interface Route : Parcelable {
     object Login : Route
 
     @Parcelize
-    object Dashboard : Route
+    data class Dashboard(val userInfo: UserInfo) : Route
 }
