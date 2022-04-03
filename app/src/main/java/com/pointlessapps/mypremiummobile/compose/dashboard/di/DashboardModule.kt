@@ -10,7 +10,10 @@ internal val dashboardModule = module {
             errorHandler = get(),
             getUserNameUseCase = get(),
             getUserPhoneNumbersUseCase = get(),
+            getUserOfferUseCase = get(),
             getBalanceUseCase = get(),
+            getInternetPackageStatusUseCase = get(),
+            getInternetPackagesUseCase = get(),
         )
     }
 }

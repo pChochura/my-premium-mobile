@@ -6,5 +6,5 @@ interface AuthorizationTokenStore {
 
     fun getAuthToken(): String?
 
-    fun refreshToken()
+    fun refreshToken(): Boolean
 }

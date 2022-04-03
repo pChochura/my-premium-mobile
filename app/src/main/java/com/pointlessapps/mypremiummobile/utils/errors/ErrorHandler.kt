@@ -3,6 +3,7 @@ package com.pointlessapps.mypremiummobile.utils.errors
 import androidx.annotation.StringRes
 import com.pointlessapps.mypremiummobile.R
 import com.pointlessapps.mypremiummobile.errors.AuthorizationInvalidUserCredentialsException
+import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
 
 internal class ErrorHandler {
 
@@ -13,6 +14,7 @@ internal class ErrorHandler {
     @StringRes
     private fun mapAuthorizationErrors(throwable: Throwable) = when (throwable) {
         is AuthorizationInvalidUserCredentialsException -> R.string.incorrect_login_or_password
+        is AuthorizationTokenExpiredException -> R.string.your_session_expired
         else -> null
     }
 }

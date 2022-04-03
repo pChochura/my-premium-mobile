@@ -24,10 +24,13 @@ internal class AuthorizationTokenStoreImpl(
 
     override fun getAuthToken() = authToken
 
-    override fun refreshToken() {
-        runBlocking {
-            setToken(authService.refreshToken("$AUTHORIZATION_BEARER $authToken").token)
-        }
+    override fun refreshToken() = runBlocking {
+        val response = runCatching {
+            authService.refreshToken("$AUTHORIZATION_BEARER $authToken")
+        }.getOrNull()
+        setToken(response?.body()?.token)
+
+        return@runBlocking response?.isSuccessful ?: false
     }
 
     companion object {

@@ -3,6 +3,7 @@ package com.pointlessapps.mypremiummobile.http.authorization
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.pointlessapps.mypremiummobile.datasource.auth.AuthorizationTokenStore
+import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
 import com.pointlessapps.mypremiummobile.http.errors.model.Error
 import okhttp3.Interceptor
 import okhttp3.Protocol
@@ -32,7 +33,9 @@ internal class AuthorizationInterceptor(
             )
 
             if (response.code == HTTP_CODE_UNAUTHORIZED) {
-                authorizationTokenStore.refreshToken()
+                if (!authorizationTokenStore.refreshToken()) {
+                    throw AuthorizationTokenExpiredException()
+                }
 
                 response = chain.proceed(
                     request.buildAuthorizedRequest(

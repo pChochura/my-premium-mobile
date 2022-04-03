@@ -19,7 +19,12 @@ internal fun NavHost(navController: NavController<Route>) {
                     navController.navigate(Route.Dashboard)
                 },
             )
-            Route.Dashboard -> DashboardScreen()
+            Route.Dashboard -> DashboardScreen(
+                onShowLogin = {
+                    navController.popAll()
+                    navController.navigate(Route.Login)
+                }
+            )
         }
     }
 }

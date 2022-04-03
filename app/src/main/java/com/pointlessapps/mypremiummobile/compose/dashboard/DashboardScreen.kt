@@ -3,6 +3,8 @@ package com.pointlessapps.mypremiummobile.compose.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -18,10 +20,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import com.pointlessapps.mypremiummobile.LocalSnackbarHostState
 import com.pointlessapps.mypremiummobile.R
-import com.pointlessapps.mypremiummobile.compose.model.Balance
-import com.pointlessapps.mypremiummobile.compose.model.UserInfo
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.*
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeLoader
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeScaffoldLayout
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeText
@@ -29,11 +31,16 @@ import com.pointlessapps.mypremiummobile.compose.ui.components.defaultComposeTex
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-internal fun DashboardScreen(viewModel: DashboardViewModel = getViewModel()) {
+internal fun DashboardScreen(
+    viewModel: DashboardViewModel = getViewModel(),
+    onShowLogin: () -> Unit,
+) {
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
+                DashboardEvent.MoveToLoginScreen ->
+                    onShowLogin()
                 is DashboardEvent.ShowErrorMessage ->
                     snackbarHost.showSnackbar(event.message)
             }
@@ -51,14 +58,14 @@ internal fun DashboardScreen(viewModel: DashboardViewModel = getViewModel()) {
                 .background(MaterialTheme.colors.background)
                 .verticalScroll(rememberScrollState())
                 .padding(padding)
-                .padding(dimensionResource(id = R.dimen.medium_padding))
+                .padding(vertical = dimensionResource(id = R.dimen.medium_padding))
                 .navigationBarsPadding()
                 .imePadding(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.big_padding)),
         ) {
             AccountBalanceCard(viewModel.state.balance)
-            YourOfferCard()
-            AdditionalInternetPackageList()
+            YourOfferCard(viewModel.state.userOffer, viewModel.state.internetPackageStatus)
+            AdditionalInternetPackageList(viewModel.state.internetPackages)
         }
     }
 }
@@ -66,7 +73,9 @@ internal fun DashboardScreen(viewModel: DashboardViewModel = getViewModel()) {
 @Composable
 private fun AccountBalanceCard(balance: Balance) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = dimensionResource(id = R.dimen.medium_padding)),
         color = MaterialTheme.colors.primary,
         shape = MaterialTheme.shapes.medium,
         elevation = dimensionResource(id = R.dimen.default_elevation),
@@ -99,7 +108,7 @@ private fun AccountBalanceCard(balance: Balance) {
                     ),
                 )
                 ComposeText(
-                    text = stringResource(id = R.string.account_balance_value, balance.balance),
+                    text = stringResource(id = R.string.amount_value, balance.balance),
                     textStyle = defaultComposeTextStyle().copy(
                         textColor = colorResource(id = R.color.accent_variant),
                         typography = MaterialTheme.typography.h1,
@@ -165,8 +174,9 @@ private fun AccountBalanceCard(balance: Balance) {
 }
 
 @Composable
-private fun YourOfferCard() {
+private fun YourOfferCard(userOffer: UserOffer, internetPackageStatus: InternetPackageStatus) {
     Column(
+        modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.medium_padding)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
     ) {
         ComposeText(
@@ -182,20 +192,141 @@ private fun YourOfferCard() {
             shape = MaterialTheme.shapes.medium,
             elevation = dimensionResource(id = R.dimen.default_elevation),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(dimensionResource(id = R.dimen.medium_padding)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding)),
             ) {
-                // no-op
+                YourOfferRow(
+                    label = stringResource(id = R.string.tariff),
+                    value = userOffer.tariff,
+                )
+                YourOfferRow(
+                    label = stringResource(id = R.string.calls_to_mobile),
+                    value = userOffer.callsMobile,
+                )
+                YourOfferRow(
+                    label = stringResource(id = R.string.calls_to_landline),
+                    value = userOffer.callsLandLine,
+                )
+                YourOfferRow(
+                    label = stringResource(id = R.string.sms),
+                    value = userOffer.sms,
+                )
+                YourOfferRow(
+                    label = stringResource(id = R.string.mms),
+                    value = userOffer.mms,
+                )
+                YourOfferRow(
+                    label = stringResource(id = R.string.internet),
+                    value = stringResource(
+                        id = R.string.internet_status,
+                        internetPackageStatus.currentStatus,
+                        internetPackageStatus.limit,
+                    ),
+                )
             }
         }
     }
 }
 
 @Composable
-private fun AdditionalInternetPackageList() {
-    // TODO("Not yet implemented")
+private fun YourOfferRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ComposeText(
+            modifier = Modifier.weight(1f),
+            text = label,
+            textStyle = defaultComposeTextStyle().copy(
+                textColor = MaterialTheme.colors.onSurface,
+                typography = MaterialTheme.typography.caption,
+            ),
+        )
+
+        ComposeText(
+            modifier = Modifier
+                .background(
+                    color = colorResource(id = R.color.accent_variant),
+                    shape = MaterialTheme.shapes.small,
+                )
+                .padding(
+                    vertical = dimensionResource(id = R.dimen.tiny_padding),
+                    horizontal = dimensionResource(id = R.dimen.small_padding),
+                ),
+            text = value,
+            textStyle = defaultComposeTextStyle().copy(
+                textColor = MaterialTheme.colors.onSurface,
+                typography = MaterialTheme.typography.caption,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun AdditionalInternetPackageList(internetPackages: List<InternetPackage>) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
+    ) {
+        ComposeText(
+            modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.medium_padding)),
+            text = stringResource(id = R.string.additional_internet_package),
+            textStyle = defaultComposeTextStyle().copy(
+                textColor = colorResource(id = R.color.grey),
+                typography = MaterialTheme.typography.h3,
+            ),
+        )
+
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.medium_padding)),
+            horizontalArrangement = Arrangement.spacedBy(
+                dimensionResource(id = R.dimen.medium_padding),
+            ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items(internetPackages, key = { it }) { internetPackage ->
+                Surface(
+                    modifier = Modifier.clickable { },
+                    color = MaterialTheme.colors.surface,
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = dimensionResource(id = R.dimen.default_elevation),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .size(dimensionResource(id = R.dimen.card_size))
+                            .padding(dimensionResource(id = R.dimen.medium_padding)),
+                        verticalArrangement = Arrangement.spacedBy(
+                            dimensionResource(id = R.dimen.small_padding),
+                            Alignment.CenterVertically,
+                        ),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        ComposeText(
+                            text = internetPackage.name,
+                            textStyle = defaultComposeTextStyle().copy(
+                                textColor = MaterialTheme.colors.onSurface,
+                                typography = MaterialTheme.typography.caption,
+                                textAlign = TextAlign.Center,
+                            ),
+                        )
+                        ComposeText(
+                            text = stringResource(
+                                id = R.string.amount_value,
+                                internetPackage.amount,
+                            ),
+                            textStyle = defaultComposeTextStyle().copy(
+                                textColor = colorResource(id = R.color.accent),
+                                typography = MaterialTheme.typography.button,
+                                textAlign = TextAlign.Center,
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

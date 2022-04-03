@@ -3,6 +3,8 @@ package com.pointlessapps.mypremiummobile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.LocalOverScrollConfiguration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -31,6 +33,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModel()
 
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -55,6 +58,7 @@ class MainActivity : ComponentActivity() {
                         backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.4f),
                     ),
                     LocalSnackbarHostState provides audiSnackbarHostState,
+                    LocalOverScrollConfiguration provides null,
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
