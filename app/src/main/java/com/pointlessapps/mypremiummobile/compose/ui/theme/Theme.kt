@@ -61,6 +61,10 @@ private fun typography() = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
     ),
+    overline = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 10.sp,
+    ),
 )
 
 @Composable

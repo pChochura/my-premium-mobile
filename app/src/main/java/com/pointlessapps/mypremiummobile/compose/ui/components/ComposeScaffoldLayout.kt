@@ -5,11 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
+import dev.olshevski.navigation.reimagined.navController
 
 @Composable
 internal fun ComposeScaffoldLayout(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
+    includeBottomNavigationBar: Boolean = true,
     content: @Composable ColumnScope.(PaddingValues) -> Unit,
 ) {
     SubcomposeLayout { constraints ->
@@ -25,6 +27,14 @@ internal fun ComposeScaffoldLayout(
 
             val topBarHeight = topBarPlaceables.maxByOrNull { it.height }?.height
 
+            val bottomBarPlaceables = subcompose(ComposeScaffoldLayoutContent.BottomBar) {
+                if (includeBottomNavigationBar) {
+                    BottomNavigationBar(navController(emptyList()))
+                }
+            }.map { it.measure(looseConstraints) }
+
+            val bottomBarHeight = bottomBarPlaceables.maxByOrNull { it.height }?.height ?: 0
+
             val bodyContentPlaceables = subcompose(ComposeScaffoldLayoutContent.Content) {
                 Column(
                     modifier = Modifier
@@ -36,6 +46,7 @@ internal fun ComposeScaffoldLayout(
                                 top = (topBarHeight ?: WindowInsets.statusBars.getTop(
                                     LocalDensity.current,
                                 )).toDp(),
+                                bottom = bottomBarHeight.toDp(),
                             ),
                         )
                     },
@@ -48,4 +59,4 @@ internal fun ComposeScaffoldLayout(
     }
 }
 
-private enum class ComposeScaffoldLayoutContent { TopBar, Content, Fab }
+private enum class ComposeScaffoldLayoutContent { TopBar, Content, BottomBar }

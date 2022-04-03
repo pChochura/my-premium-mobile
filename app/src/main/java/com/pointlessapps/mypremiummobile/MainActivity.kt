@@ -22,9 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.core.view.WindowCompat
 import com.pointlessapps.mypremiummobile.compose.NavHost
+import com.pointlessapps.mypremiummobile.compose.ui.components.BottomNavigationBar
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbar
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbarHostState
 import com.pointlessapps.mypremiummobile.compose.ui.theme.ProjectTheme
+import com.pointlessapps.mypremiummobile.compose.ui.theme.Route
 import dev.olshevski.navigation.reimagined.rememberNavController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -64,11 +66,18 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        NavHost(
-                            navController = rememberNavController(
-                                startDestination = viewModel.getStartDestination(),
-                            ),
+                        val navController = rememberNavController(
+                            startDestination = viewModel.getStartDestination(),
                         )
+                        NavHost(navController = navController)
+
+                        if (navController.backstack.entries.last().destination != Route.Login) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.BottomCenter,
+                                content = { BottomNavigationBar(navController) },
+                            )
+                        }
 
                         Box(
                             modifier = Modifier

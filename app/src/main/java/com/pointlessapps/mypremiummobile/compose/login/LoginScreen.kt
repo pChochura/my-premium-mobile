@@ -41,13 +41,13 @@ internal fun LoginScreen(
 
     ComposeLoader(enabled = viewModel.state.isLoading)
 
-    ComposeScaffoldLayout { padding ->
+    ComposeScaffoldLayout(includeBottomNavigationBar = false) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .imePadding()
                 .navigationBarsPadding()
+                .imePadding()
                 .padding(padding)
                 .padding(dimensionResource(id = R.dimen.big_padding)),
             horizontalAlignment = Alignment.CenterHorizontally,

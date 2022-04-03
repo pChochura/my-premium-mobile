@@ -28,4 +28,9 @@
 	<string name="internet">Internet</string>
 	<string name="internet_status">%.2f GB / %.0f GB</string>
 	<string name="additional_internet_package">Additional internet package</string>
+	<string name="dashboard">Dashboard</string>
+	<string name="payments">Payments</string>
+	<string name="services">Services</string>
+	<string name="documents">Documents</string>
+	<string name="help">Help</string>
 </resources>

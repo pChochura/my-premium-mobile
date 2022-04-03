@@ -89,6 +89,7 @@ private fun AccountBalanceCard(balance: Balance) {
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .size(dimensionResource(id = R.dimen.icon_button_size))
+                    .clip(CircleShape)
                     .clickable { },
                 contentAlignment = Alignment.Center,
             ) {
