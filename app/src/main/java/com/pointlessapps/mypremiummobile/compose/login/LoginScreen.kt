@@ -17,7 +17,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.pointlessapps.mypremiummobile.LocalSnackbarHostState
 import com.pointlessapps.mypremiummobile.R
 import com.pointlessapps.mypremiummobile.compose.model.InputError
-import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import com.pointlessapps.mypremiummobile.compose.ui.components.*
 import org.koin.androidx.compose.getViewModel
 
@@ -26,14 +25,14 @@ private const val LOGO_WIDTH_RATIO = 0.65f
 @Composable
 internal fun LoginScreen(
     viewModel: LoginViewModel = getViewModel(),
-    onShowDashboard: (UserInfo) -> Unit,
+    onShowDashboard: () -> Unit,
 ) {
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is LoginEvent.MoveToNextScreen ->
-                    onShowDashboard(event.userInfo)
+                    onShowDashboard()
                 is LoginEvent.ShowErrorMessage ->
                     snackbarHost.showSnackbar(event.message)
             }

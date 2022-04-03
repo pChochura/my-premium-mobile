@@ -1,10 +1,12 @@
 package com.pointlessapps.mypremiummobile.http.di
 
+import android.content.Context
 import com.google.gson.Gson
 import com.pointlessapps.mypremiummobile.http.BASE_URL_PROPERTY_KEY
 import com.pointlessapps.mypremiummobile.http.LOG_LEVEL_PROPERTY_KEY
 import com.pointlessapps.mypremiummobile.http.authorization.AuthorizationInterceptor
 import com.pointlessapps.mypremiummobile.http.authorization.SessionCookieJar
+import com.pointlessapps.mypremiummobile.http.authorization.SessionCookieJar.Companion.SHARED_PREFERENCES_KEY
 import com.pointlessapps.mypremiummobile.http.errors.ErrorCallAdapterFactory
 import com.pointlessapps.mypremiummobile.http.logger.TimberLogger
 import okhttp3.CookieJar
@@ -36,7 +38,13 @@ val httpModule = module {
     }
 
     single<CookieJar> {
-        SessionCookieJar()
+        SessionCookieJar(
+            gson = Gson(),
+            sharedPreferences = get<Context>().getSharedPreferences(
+                SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE,
+            ),
+        )
     }
 
     single {

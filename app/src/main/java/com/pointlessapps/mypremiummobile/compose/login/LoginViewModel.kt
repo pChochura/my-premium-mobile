@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pointlessapps.mypremiummobile.compose.model.InputModel
-import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import com.pointlessapps.mypremiummobile.domain.auth.usecase.LoginUseCase
 import com.pointlessapps.mypremiummobile.domain.validation.usecase.ValidateSimpleInputUseCase
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
@@ -23,7 +22,7 @@ internal data class LoginState(
 )
 
 internal sealed interface LoginEvent {
-    data class MoveToNextScreen(val userInfo: UserInfo) : LoginEvent
+    object MoveToNextScreen : LoginEvent
     data class ShowErrorMessage(@StringRes val message: Int) : LoginEvent
 }
 
@@ -89,14 +88,7 @@ internal class LoginViewModel(
             }
             .onEach {
                 state = state.copy(isLoading = false)
-                eventChannel.send(
-                    LoginEvent.MoveToNextScreen(
-                        UserInfo(
-                            email = it.email,
-                            name = it.name,
-                        ),
-                    ),
-                )
+                eventChannel.send(LoginEvent.MoveToNextScreen)
             }
             .catch { throwable ->
                 Timber.d(throwable)

@@ -1,7 +1,6 @@
 package com.pointlessapps.mypremiummobile.datasource.auth.dto
 
-data class LoginResponse(
+data class UserInfoResponse(
     val email: String,
     val name: String,
-    val token: String,
 )

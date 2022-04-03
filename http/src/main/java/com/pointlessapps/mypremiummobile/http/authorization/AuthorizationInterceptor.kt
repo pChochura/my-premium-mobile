@@ -66,7 +66,7 @@ internal class AuthorizationInterceptor(
         }
     }
 
-    private fun Request.buildAuthorizedRequest(authToken: String): Request =
+    private fun Request.buildAuthorizedRequest(authToken: String?): Request =
         newBuilder()
             .addHeader(AUTHORIZATION_HEADER, "$AUTHORIZATION_BEARER $authToken")
             .build()

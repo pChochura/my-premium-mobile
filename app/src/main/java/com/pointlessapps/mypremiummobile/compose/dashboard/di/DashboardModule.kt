@@ -5,10 +5,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 internal val dashboardModule = module {
-    viewModel { params ->
+    viewModel {
         DashboardViewModel(
-            userInfo = params.get(),
             errorHandler = get(),
+            getUserNameUseCase = get(),
             getUserPhoneNumbersUseCase = get(),
             getBalanceUseCase = get(),
         )

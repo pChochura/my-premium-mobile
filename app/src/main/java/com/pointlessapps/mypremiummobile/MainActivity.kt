@@ -23,9 +23,14 @@ import com.pointlessapps.mypremiummobile.compose.NavHost
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbar
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbarHostState
 import com.pointlessapps.mypremiummobile.compose.ui.theme.ProjectTheme
+import dev.olshevski.navigation.reimagined.rememberNavController
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -55,7 +60,11 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        NavHost()
+                        NavHost(
+                            navController = rememberNavController(
+                                startDestination = viewModel.getStartDestination(),
+                            ),
+                        )
 
                         Box(
                             modifier = Modifier

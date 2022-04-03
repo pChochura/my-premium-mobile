@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pointlessapps.mypremiummobile.compose.model.Balance
 import com.pointlessapps.mypremiummobile.compose.model.UserInfo
+import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetBalanceUseCase
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
@@ -16,7 +17,10 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 internal data class DashboardState(
-    val userInfo: UserInfo,
+    val userInfo: UserInfo = UserInfo(
+        email = "",
+        name = "",
+    ),
     val balance: Balance = Balance(
         balance = "",
         billingPeriod = "",
@@ -30,8 +34,8 @@ internal sealed interface DashboardEvent {
 }
 
 internal class DashboardViewModel(
-    userInfo: UserInfo,
     errorHandler: ErrorHandler,
+    getUserNameUseCase: GetUserNameUseCase,
     getUserPhoneNumbersUseCase: GetUserPhoneNumbersUseCase,
     getBalanceUseCase: GetBalanceUseCase,
 ) : ViewModel() {
@@ -39,24 +43,25 @@ internal class DashboardViewModel(
     private val eventChannel = Channel<DashboardEvent>(Channel.RENDEZVOUS)
     val events = eventChannel.receiveAsFlow()
 
-    var state by mutableStateOf(
-        DashboardState(userInfo = userInfo),
-    )
+    var state by mutableStateOf(DashboardState())
 
     init {
         combine(
+            getUserNameUseCase.prepare(),
             getUserPhoneNumbersUseCase.prepare(),
             getBalanceUseCase.prepare(),
-        ) { phoneNumbers, balance ->
-            phoneNumbers to balance
+        ) { userInfo, phoneNumbers, balance ->
+            Triple(userInfo, phoneNumbers, balance)
         }.take(1)
             .onStart {
                 state = state.copy(isLoading = true)
             }
-            .onEach { (phoneNumbers, balance) ->
+            .onEach { (userInfo, phoneNumbers, balance) ->
                 state = state.copy(
-                    userInfo = state.userInfo.copy(
-                        phoneNumber = phoneNumbers.find { it.isMain }?.phoneNumber,
+                    userInfo = UserInfo(
+                        email = userInfo.email,
+                        name = userInfo.name,
+                        phoneNumber = phoneNumbers.find { it.isMain }?.phoneNumber
                     ),
                     balance = Balance(
                         balance = balance.balance,

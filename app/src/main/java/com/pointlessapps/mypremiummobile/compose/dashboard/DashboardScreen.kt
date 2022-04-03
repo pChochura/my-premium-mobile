@@ -29,9 +29,7 @@ import com.pointlessapps.mypremiummobile.compose.ui.components.defaultComposeTex
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-internal fun DashboardScreen(
-    viewModel: DashboardViewModel = getViewModel(),
-) {
+internal fun DashboardScreen(viewModel: DashboardViewModel = getViewModel()) {
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -213,6 +211,7 @@ private fun TopBar(userInfo: UserInfo) {
                 .statusBarsPadding()
                 .padding(dimensionResource(id = R.dimen.medium_padding)),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding)),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier = Modifier
