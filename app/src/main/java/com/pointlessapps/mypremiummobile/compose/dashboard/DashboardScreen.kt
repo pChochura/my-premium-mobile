@@ -45,7 +45,7 @@ internal fun DashboardScreen(
     ComposeLoader(enabled = viewModel.state.isLoading)
 
     ComposeScaffoldLayout(
-        topBar = { TopBar(viewModel.state.userInfo) }
+        topBar = { TopBar(viewModel.state.userInfo) },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -189,7 +189,7 @@ private fun YourOfferCard() {
                     .fillMaxSize()
                     .padding(dimensionResource(id = R.dimen.medium_padding)),
             ) {
-
+                // no-op
             }
         }
     }

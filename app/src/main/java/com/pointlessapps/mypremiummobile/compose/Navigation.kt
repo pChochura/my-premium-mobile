@@ -27,7 +27,7 @@ internal fun NavHost(
             is Route.Dashboard -> DashboardScreen(
                 viewModel = getViewModel {
                     parametersOf(it.userInfo)
-                }
+                },
             )
         }
     }

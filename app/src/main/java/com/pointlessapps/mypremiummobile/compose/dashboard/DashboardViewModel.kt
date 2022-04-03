@@ -46,7 +46,7 @@ internal class DashboardViewModel(
     init {
         combine(
             getUserPhoneNumbersUseCase.prepare(),
-            getBalanceUseCase.prepare()
+            getBalanceUseCase.prepare(),
         ) { phoneNumbers, balance ->
             phoneNumbers to balance
         }.take(1)
@@ -56,7 +56,7 @@ internal class DashboardViewModel(
             .onEach { (phoneNumbers, balance) ->
                 state = state.copy(
                     userInfo = state.userInfo.copy(
-                        phoneNumber = phoneNumbers.find { it.isMain }?.phoneNumber
+                        phoneNumber = phoneNumbers.find { it.isMain }?.phoneNumber,
                     ),
                     balance = Balance(
                         balance = balance.balance,
