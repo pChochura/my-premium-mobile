@@ -7,6 +7,7 @@ import com.pointlessapps.mypremiummobile.datasource.payments.PaymentsDatasource
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoicesBodyDto
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.PayWithPayUBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toBalanceResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toInvoicesResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.service.PaymentsService
@@ -73,6 +74,9 @@ internal class PaymentsDatasourceImpl(
         downloadedFile.writeBytes(bytes)
         return Uri.fromFile(downloadedFile).path ?: throw NullPointerException()
     }
+
+    override suspend fun getPayWithPayUUrl(amount: Float) =
+        paymentsService.getPayWithPayUUrl(PayWithPayUBodyDto(amount))
 
     companion object {
         private const val TEXT_PLAIN_MEDIA_TYPE = "text/plain"

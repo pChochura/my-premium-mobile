@@ -41,4 +41,10 @@ internal val paymentsModule = module {
             paymentsRepository = get(),
         )
     }
+
+    factory {
+        GetPayWithPayUUrlUseCase(
+            paymentsRepository = get(),
+        )
+    }
 }

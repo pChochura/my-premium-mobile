@@ -15,10 +15,7 @@ import com.pointlessapps.mypremiummobile.compose.payments.model.PaymentsModel
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
 import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.DownloadBillingUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.DownloadInvoiceUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetInvoicesUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentAmountUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.*
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
 import com.pointlessapps.mypremiummobile.domain.utils.DateFormatter
 import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
@@ -38,6 +35,7 @@ internal data class PaymentsState(
 internal sealed interface PaymentsEvent {
     object MoveToLoginScreen : PaymentsEvent
     data class OpenFile(val uri: Uri) : PaymentsEvent
+    data class OpenUrl(val uri: Uri) : PaymentsEvent
     data class ShowErrorMessage(@StringRes val message: Int) : PaymentsEvent
 }
 
@@ -49,6 +47,7 @@ internal class PaymentsViewModel(
     getInvoicesUseCase: GetInvoicesUseCase,
     private val downloadInvoiceUseCase: DownloadInvoiceUseCase,
     private val downloadBillingUseCase: DownloadBillingUseCase,
+    private val getPayWithPayUUrlUseCase: GetPayWithPayUUrlUseCase,
     private val dateFormatter: DateFormatter,
 ) : ViewModel() {
 
@@ -152,6 +151,30 @@ internal class PaymentsViewModel(
             .onEach { fileUri ->
                 state = state.copy(isLoading = false)
                 eventChannel.send(PaymentsEvent.OpenFile(Uri.parse(fileUri)))
+            }
+            .catch { throwable ->
+                Timber.e(throwable)
+
+                state = state.copy(isLoading = false)
+                eventChannel.send(
+                    PaymentsEvent.ShowErrorMessage(
+                        errorHandler.mapThrowableToErrorMessage(throwable),
+                    ),
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun payWithPayU() {
+        getPayWithPayUUrlUseCase
+            .prepare(state.balance.balance.replace(',', '.').toFloat())
+            .take(1)
+            .onStart {
+                state = state.copy(isLoading = true)
+            }
+            .onEach { url ->
+                state = state.copy(isLoading = false)
+                eventChannel.send(PaymentsEvent.OpenUrl(Uri.parse(url)))
             }
             .catch { throwable ->
                 Timber.e(throwable)

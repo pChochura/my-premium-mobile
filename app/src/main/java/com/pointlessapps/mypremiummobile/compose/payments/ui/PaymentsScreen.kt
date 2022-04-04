@@ -43,12 +43,14 @@ internal fun PaymentsScreen(
                     onShowLogin()
                 is PaymentsEvent.ShowErrorMessage ->
                     snackbarHost.showSnackbar(event.message)
-                is PaymentsEvent.OpenFile ->
-                    context.startActivity(
-                        Intent(Intent.ACTION_VIEW, event.uri).apply {
-                            type = "application/pdf"
-                        },
-                    )
+                is PaymentsEvent.OpenFile -> context.startActivity(
+                    Intent(Intent.ACTION_VIEW, event.uri).apply {
+                        type = "application/pdf"
+                    },
+                )
+                is PaymentsEvent.OpenUrl -> context.startActivity(
+                    Intent(Intent.ACTION_VIEW, event.uri),
+                )
             }
         }
     }
@@ -69,7 +71,10 @@ internal fun PaymentsScreen(
                 .imePadding(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.big_padding)),
         ) {
-            AccountBalanceCard(viewModel.state.balance)
+            AccountBalanceCard(
+                balance = viewModel.state.balance,
+                onPayWithPayU = viewModel::payWithPayU,
+            )
             InvoicesCard(
                 invoices = viewModel.state.invoices,
                 onDownloadInvoice = viewModel::downloadInvoice,
@@ -80,7 +85,10 @@ internal fun PaymentsScreen(
 }
 
 @Composable
-private fun AccountBalanceCard(balance: Balance) {
+private fun AccountBalanceCard(
+    balance: Balance,
+    onPayWithPayU: () -> Unit,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colors.primary,
@@ -123,7 +131,7 @@ private fun AccountBalanceCard(balance: Balance) {
                     .padding(top = dimensionResource(id = R.dimen.small_padding))
                     .fillMaxWidth(),
                 text = stringResource(id = R.string.pay_with_payu),
-                onClick = { /*TODO*/ },
+                onClick = onPayWithPayU,
                 buttonStyle = defaultComposeButtonStyle().copy(
                     backgroundColor = colorResource(id = R.color.accent),
                 ),

@@ -4,6 +4,7 @@ import com.pointlessapps.mypremiummobile.http.authorization.Authorize
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.BalanceResponseDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoiceResponseDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoicesBodyDto
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.PayWithPayUBodyDto
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -38,4 +39,10 @@ internal interface PaymentsService {
     suspend fun getBillingDocument(
         @Body body: RequestBody,
     ): Response<ResponseBody>
+
+    @Authorize
+    @POST("PayU/SendOrderToPaymentService")
+    suspend fun getPayWithPayUUrl(
+        @Body payWithPayUBodyDto: PayWithPayUBodyDto,
+    ): String
 }

@@ -20,6 +20,8 @@ interface PaymentsRepository {
     fun downloadInvoice(invoiceNumber: String): Flow<String>
 
     fun downloadBilling(invoiceNumber: String): Flow<String>
+
+    fun getPayWithPayUUrl(amount: Float): Flow<String>
 }
 
 internal class PaymentRepositoryImpl(
@@ -44,5 +46,9 @@ internal class PaymentRepositoryImpl(
 
     override fun downloadBilling(invoiceNumber: String): Flow<String> = flow {
         emit(paymentsDatasource.downloadBilling(invoiceNumber))
+    }.flowOn(Dispatchers.IO)
+
+    override fun getPayWithPayUUrl(amount: Float): Flow<String> = flow {
+        emit(paymentsDatasource.getPayWithPayUUrl(amount))
     }.flowOn(Dispatchers.IO)
 }

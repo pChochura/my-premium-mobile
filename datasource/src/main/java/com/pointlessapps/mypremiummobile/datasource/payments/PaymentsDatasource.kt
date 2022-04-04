@@ -14,4 +14,6 @@ interface PaymentsDatasource {
     suspend fun downloadInvoice(invoiceNumber: String): String
 
     suspend fun downloadBilling(invoiceNumber: String): String
+
+    suspend fun getPayWithPayUUrl(amount: Float): String
 }
