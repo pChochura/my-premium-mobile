@@ -15,9 +15,8 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 internal data class LoginState(
-    //TODO:
-    val login: InputModel = InputModel(value = "732824592"),
-    val password: InputModel = InputModel(value = "Pipistrelus.3524"),
+    val login: InputModel = InputModel(),
+    val password: InputModel = InputModel(),
     val isButtonEnabled: Boolean = false,
     val isLoading: Boolean = false,
 )

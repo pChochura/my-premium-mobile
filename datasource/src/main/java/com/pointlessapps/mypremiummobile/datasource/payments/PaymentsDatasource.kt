@@ -10,4 +10,8 @@ interface PaymentsDatasource {
     suspend fun getPaymentAmount(): Float
 
     suspend fun getInvoices(fromDate: Date, toDate: Date): List<InvoiceResponse>
+
+    suspend fun downloadInvoice(invoiceNumber: String): String
+
+    suspend fun downloadBilling(invoiceNumber: String): String
 }

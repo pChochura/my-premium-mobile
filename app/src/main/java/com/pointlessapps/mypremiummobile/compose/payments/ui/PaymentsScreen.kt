@@ -1,5 +1,6 @@
 package com.pointlessapps.mypremiummobile.compose.payments.ui
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -28,13 +30,25 @@ import org.koin.androidx.compose.getViewModel
 private const val MAX_ITEMS_DISPLAYED = 3
 
 @Composable
-internal fun PaymentsScreen(viewModel: PaymentsViewModel = getViewModel()) {
+internal fun PaymentsScreen(
+    viewModel: PaymentsViewModel = getViewModel(),
+    onShowLogin: () -> Unit,
+) {
+    val context = LocalContext.current
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
+                PaymentsEvent.MoveToLoginScreen ->
+                    onShowLogin()
                 is PaymentsEvent.ShowErrorMessage ->
                     snackbarHost.showSnackbar(event.message)
+                is PaymentsEvent.OpenFile ->
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW, event.uri).apply {
+                            type = "application/pdf"
+                        },
+                    )
             }
         }
     }
@@ -56,7 +70,11 @@ internal fun PaymentsScreen(viewModel: PaymentsViewModel = getViewModel()) {
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.big_padding)),
         ) {
             AccountBalanceCard(viewModel.state.balance)
-            InvoicesCard(viewModel.state.invoices)
+            InvoicesCard(
+                invoices = viewModel.state.invoices,
+                onDownloadInvoice = viewModel::downloadInvoice,
+                onDownloadBilling = viewModel::downloadBilling,
+            )
         }
     }
 }
@@ -115,7 +133,11 @@ private fun AccountBalanceCard(balance: Balance) {
 }
 
 @Composable
-private fun InvoicesCard(invoices: List<Invoice>) {
+private fun InvoicesCard(
+    invoices: List<Invoice>,
+    onDownloadInvoice: (Invoice) -> Unit,
+    onDownloadBilling: (Invoice) -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
@@ -168,7 +190,11 @@ private fun InvoicesCard(invoices: List<Invoice>) {
             ) {
                 val items = invoices.take(MAX_ITEMS_DISPLAYED)
                 items.forEachIndexed { index, item ->
-                    InvoiceRow(item)
+                    InvoiceRow(
+                        invoice = item,
+                        onDownloadInvoice = onDownloadInvoice,
+                        onDownloadBilling = onDownloadBilling,
+                    )
 
                     if (index != items.lastIndex) {
                         Spacer(
@@ -185,7 +211,11 @@ private fun InvoicesCard(invoices: List<Invoice>) {
 }
 
 @Composable
-private fun InvoiceRow(invoice: Invoice) {
+private fun InvoiceRow(
+    invoice: Invoice,
+    onDownloadInvoice: (Invoice) -> Unit,
+    onDownloadBilling: (Invoice) -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding))) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -230,7 +260,7 @@ private fun InvoiceRow(invoice: Invoice) {
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.small)
                     .background(colorResource(id = R.color.accent_variant))
-                    .clickable { /*TODO*/ }
+                    .clickable { onDownloadInvoice(invoice) }
                     .padding(
                         vertical = dimensionResource(id = R.dimen.tiny_padding),
                         horizontal = dimensionResource(id = R.dimen.small_padding),
@@ -256,7 +286,7 @@ private fun InvoiceRow(invoice: Invoice) {
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.small)
                     .background(colorResource(id = R.color.accent_variant))
-                    .clickable { /*TODO*/ }
+                    .clickable { onDownloadBilling(invoice) }
                     .padding(
                         vertical = dimensionResource(id = R.dimen.tiny_padding),
                         horizontal = dimensionResource(id = R.dimen.small_padding),

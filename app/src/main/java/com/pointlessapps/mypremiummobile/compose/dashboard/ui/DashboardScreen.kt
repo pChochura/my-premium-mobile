@@ -34,6 +34,7 @@ import org.koin.androidx.compose.getViewModel
 internal fun DashboardScreen(
     viewModel: DashboardViewModel = getViewModel(),
     onShowLogin: () -> Unit,
+    onShowPayments: () -> Unit,
 ) {
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
@@ -63,7 +64,10 @@ internal fun DashboardScreen(
                 .imePadding(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.big_padding)),
         ) {
-            AccountBalanceCard(viewModel.state.balance)
+            AccountBalanceCard(
+                balance = viewModel.state.balance,
+                onShowPaymentDetails = onShowPayments,
+            )
             YourOfferCard(viewModel.state.userOffer, viewModel.state.internetPackageStatus)
             AdditionalInternetPackageList(viewModel.state.internetPackages)
         }
@@ -71,7 +75,7 @@ internal fun DashboardScreen(
 }
 
 @Composable
-private fun AccountBalanceCard(balance: Balance) {
+private fun AccountBalanceCard(balance: Balance, onShowPaymentDetails: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,7 +94,7 @@ private fun AccountBalanceCard(balance: Balance) {
                     .align(Alignment.TopEnd)
                     .size(dimensionResource(id = R.dimen.icon_button_size))
                     .clip(CircleShape)
-                    .clickable { },
+                    .clickable(onClick = onShowPaymentDetails),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

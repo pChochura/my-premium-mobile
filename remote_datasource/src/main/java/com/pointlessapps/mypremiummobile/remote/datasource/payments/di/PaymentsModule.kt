@@ -18,6 +18,7 @@ internal val paymentsModule = module {
 
     single<PaymentsDatasource> {
         PaymentsDatasourceImpl(
+            context = get(),
             paymentsService = get(),
             dateParser = get(PAYMENTS_DATE_FORMATTER),
         )

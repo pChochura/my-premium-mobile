@@ -33,8 +33,19 @@ internal fun NavHost(navController: NavController<Route>) {
                     navController.popAll()
                     navController.navigate(Route.Login)
                 },
+                onShowPayments = {
+                    navController.navigateIfPossible(Route.Payments)
+                },
             )
-            Route.Payments -> PaymentsScreen()
+            Route.Payments -> PaymentsScreen(
+                onShowLogin = {
+                    navController.popAll()
+                    navController.navigate(Route.Login)
+                },
+            )
+            else -> {
+                // no-op
+            }
         }
     }
 }

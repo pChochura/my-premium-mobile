@@ -16,6 +16,10 @@ interface PaymentsRepository {
     fun getPaymentAmount(): Flow<Float>
 
     fun getInvoices(fromDate: Date, toDate: Date): Flow<List<InvoiceResponse>>
+
+    fun downloadInvoice(invoiceNumber: String): Flow<String>
+
+    fun downloadBilling(invoiceNumber: String): Flow<String>
 }
 
 internal class PaymentRepositoryImpl(
@@ -32,5 +36,13 @@ internal class PaymentRepositoryImpl(
 
     override fun getInvoices(fromDate: Date, toDate: Date): Flow<List<InvoiceResponse>> = flow {
         emit(paymentsDatasource.getInvoices(fromDate, toDate))
+    }.flowOn(Dispatchers.IO)
+
+    override fun downloadInvoice(invoiceNumber: String): Flow<String> = flow {
+        emit(paymentsDatasource.downloadInvoice(invoiceNumber))
+    }.flowOn(Dispatchers.IO)
+
+    override fun downloadBilling(invoiceNumber: String): Flow<String> = flow {
+        emit(paymentsDatasource.downloadBilling(invoiceNumber))
     }.flowOn(Dispatchers.IO)
 }

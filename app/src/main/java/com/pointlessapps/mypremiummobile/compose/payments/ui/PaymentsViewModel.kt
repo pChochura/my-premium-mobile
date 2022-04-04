@@ -1,5 +1,6 @@
 package com.pointlessapps.mypremiummobile.compose.payments.ui
 
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,10 +15,13 @@ import com.pointlessapps.mypremiummobile.compose.payments.model.PaymentsModel
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
 import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.DownloadBillingUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.DownloadInvoiceUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetInvoicesUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentAmountUseCase
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
 import com.pointlessapps.mypremiummobile.domain.utils.DateFormatter
+import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -32,17 +36,25 @@ internal data class PaymentsState(
 )
 
 internal sealed interface PaymentsEvent {
+    object MoveToLoginScreen : PaymentsEvent
+    data class OpenFile(val uri: Uri) : PaymentsEvent
     data class ShowErrorMessage(@StringRes val message: Int) : PaymentsEvent
 }
 
 internal class PaymentsViewModel(
-    errorHandler: ErrorHandler,
+    private val errorHandler: ErrorHandler,
     getUserNameUseCase: GetUserNameUseCase,
     getUserPhoneNumbersUseCase: GetUserPhoneNumbersUseCase,
     getPaymentAmountUseCase: GetPaymentAmountUseCase,
     getInvoicesUseCase: GetInvoicesUseCase,
+    private val downloadInvoiceUseCase: DownloadInvoiceUseCase,
+    private val downloadBillingUseCase: DownloadBillingUseCase,
     private val dateFormatter: DateFormatter,
 ) : ViewModel() {
+
+    companion object {
+        private const val THREE_MONTHS = 3
+    }
 
     private val eventChannel = Channel<PaymentsEvent>(Channel.RENDEZVOUS)
     val events = eventChannel.receiveAsFlow()
@@ -51,7 +63,8 @@ internal class PaymentsViewModel(
 
     init {
         val today = Calendar.getInstance().time
-        val threeMonthsAgo = Calendar.getInstance().apply { add(Calendar.MONTH, -3) }.time
+        val threeMonthsAgo =
+            Calendar.getInstance().apply { add(Calendar.MONTH, -THREE_MONTHS) }.time
 
         combine(
             getUserPhoneNumbersUseCase.prepare(),
@@ -83,6 +96,10 @@ internal class PaymentsViewModel(
             }
             .catch { throwable ->
                 Timber.e(throwable)
+
+                if (throwable is AuthorizationTokenExpiredException) {
+                    eventChannel.send(PaymentsEvent.MoveToLoginScreen)
+                }
 
                 state = state.copy(isLoading = false)
                 eventChannel.send(
@@ -118,4 +135,34 @@ internal class PaymentsViewModel(
             )
         },
     )
+
+    fun downloadInvoice(invoice: Invoice) = executeDownloadFile(
+        downloadInvoiceUseCase.prepare(invoice.invoiceNumber),
+    )
+
+    fun downloadBilling(invoice: Invoice) = executeDownloadFile(
+        downloadBillingUseCase.prepare(invoice.invoiceNumber),
+    )
+
+    private fun executeDownloadFile(flow: Flow<String>) {
+        flow.take(1)
+            .onStart {
+                state = state.copy(isLoading = true)
+            }
+            .onEach { fileUri ->
+                state = state.copy(isLoading = false)
+                eventChannel.send(PaymentsEvent.OpenFile(Uri.parse(fileUri)))
+            }
+            .catch { throwable ->
+                Timber.e(throwable)
+
+                state = state.copy(isLoading = false)
+                eventChannel.send(
+                    PaymentsEvent.ShowErrorMessage(
+                        errorHandler.mapThrowableToErrorMessage(throwable),
+                    ),
+                )
+            }
+            .launchIn(viewModelScope)
+    }
 }

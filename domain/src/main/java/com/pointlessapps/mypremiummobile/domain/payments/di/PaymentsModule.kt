@@ -2,9 +2,7 @@ package com.pointlessapps.mypremiummobile.domain.payments.di
 
 import com.pointlessapps.mypremiummobile.domain.payments.PaymentRepositoryImpl
 import com.pointlessapps.mypremiummobile.domain.payments.PaymentsRepository
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetBalanceUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetInvoicesUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentAmountUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.*
 import org.koin.dsl.module
 
 internal val paymentsModule = module {
@@ -28,6 +26,18 @@ internal val paymentsModule = module {
 
     factory {
         GetInvoicesUseCase(
+            paymentsRepository = get(),
+        )
+    }
+
+    factory {
+        DownloadInvoiceUseCase(
+            paymentsRepository = get(),
+        )
+    }
+
+    factory {
+        DownloadBillingUseCase(
             paymentsRepository = get(),
         )
     }
