@@ -76,7 +76,6 @@ private fun RowScope.BottomNavigationBarItem(
 ) {
     BottomNavigationItem(
         selected = isSelected,
-        alwaysShowLabel = false,
         onClick = onClick,
         icon = {
             Icon(

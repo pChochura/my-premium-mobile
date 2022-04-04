@@ -1,6 +1,6 @@
 package com.pointlessapps.mypremiummobile.compose.login.di
 
-import com.pointlessapps.mypremiummobile.compose.login.LoginViewModel
+import com.pointlessapps.mypremiummobile.compose.login.ui.LoginViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

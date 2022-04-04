@@ -1,4 +1,4 @@
-package com.pointlessapps.mypremiummobile.compose.login
+package com.pointlessapps.mypremiummobile.compose.login.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 internal data class LoginState(
-    val login: InputModel = InputModel(),
-    val password: InputModel = InputModel(),
+    //TODO:
+    val login: InputModel = InputModel(value = "732824592"),
+    val password: InputModel = InputModel(value = "Pipistrelus.3524"),
     val isButtonEnabled: Boolean = false,
     val isLoading: Boolean = false,
 )
@@ -91,7 +92,7 @@ internal class LoginViewModel(
                 eventChannel.send(LoginEvent.MoveToNextScreen)
             }
             .catch { throwable ->
-                Timber.d(throwable)
+                Timber.e(throwable)
                 state = state.copy(isLoading = false)
                 eventChannel.send(
                     LoginEvent.ShowErrorMessage(errorHandler.mapThrowableToErrorMessage(throwable)),

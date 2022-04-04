@@ -1,4 +1,4 @@
-package com.pointlessapps.mypremiummobile.compose.dashboard
+package com.pointlessapps.mypremiummobile.compose.dashboard.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,11 +23,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.pointlessapps.mypremiummobile.LocalSnackbarHostState
 import com.pointlessapps.mypremiummobile.R
-import com.pointlessapps.mypremiummobile.compose.dashboard.model.*
-import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeLoader
-import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeScaffoldLayout
-import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeText
-import com.pointlessapps.mypremiummobile.compose.ui.components.defaultComposeTextStyle
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.InternetPackage
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.InternetPackageStatus
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.UserOffer
+import com.pointlessapps.mypremiummobile.compose.model.Balance
+import com.pointlessapps.mypremiummobile.compose.ui.components.*
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -325,71 +325,6 @@ private fun AdditionalInternetPackageList(internetPackages: List<InternetPackage
                         )
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TopBar(userInfo: UserInfo) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.background,
-        elevation = dimensionResource(id = R.dimen.default_elevation),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(dimensionResource(id = R.dimen.medium_padding)),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding)),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.icon_button_size))
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colors.surface),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.icon_size)),
-                    painter = painterResource(id = R.drawable.ic_person),
-                    tint = colorResource(id = R.color.accent),
-                    contentDescription = null,
-                )
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.tiny_padding)),
-            ) {
-                ComposeText(
-                    text = userInfo.name,
-                    textStyle = defaultComposeTextStyle().copy(
-                        textColor = MaterialTheme.colors.onBackground,
-                    ),
-                )
-                ComposeText(
-                    text = userInfo.phoneNumber.orEmpty(),
-                    textStyle = defaultComposeTextStyle().copy(
-                        textColor = colorResource(id = R.color.grey),
-                    ),
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.icon_button_size))
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colors.surface)
-                    .clickable { },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.icon_size)),
-                    painter = painterResource(id = R.drawable.ic_settings),
-                    tint = colorResource(id = R.color.accent),
-                    contentDescription = null,
-                )
             }
         }
     }

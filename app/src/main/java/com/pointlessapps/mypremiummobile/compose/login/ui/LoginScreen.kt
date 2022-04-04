@@ -1,4 +1,4 @@
-package com.pointlessapps.mypremiummobile.compose.login
+package com.pointlessapps.mypremiummobile.compose.login.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

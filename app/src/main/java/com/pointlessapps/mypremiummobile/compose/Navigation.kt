@@ -3,8 +3,9 @@ package com.pointlessapps.mypremiummobile.compose
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import com.pointlessapps.mypremiummobile.compose.dashboard.DashboardScreen
-import com.pointlessapps.mypremiummobile.compose.login.LoginScreen
+import com.pointlessapps.mypremiummobile.compose.dashboard.ui.DashboardScreen
+import com.pointlessapps.mypremiummobile.compose.login.ui.LoginScreen
+import com.pointlessapps.mypremiummobile.compose.payments.ui.PaymentsScreen
 import com.pointlessapps.mypremiummobile.compose.ui.theme.Route
 import dev.olshevski.navigation.reimagined.*
 
@@ -33,6 +34,7 @@ internal fun NavHost(navController: NavController<Route>) {
                     navController.navigate(Route.Login)
                 },
             )
+            Route.Payments -> PaymentsScreen()
         }
     }
 }

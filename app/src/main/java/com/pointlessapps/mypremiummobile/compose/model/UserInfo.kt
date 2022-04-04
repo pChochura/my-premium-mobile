@@ -1,4 +1,4 @@
-package com.pointlessapps.mypremiummobile.compose.dashboard.model
+package com.pointlessapps.mypremiummobile.compose.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

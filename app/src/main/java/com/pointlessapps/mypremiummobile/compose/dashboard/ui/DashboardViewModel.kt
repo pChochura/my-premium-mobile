@@ -1,4 +1,4 @@
-package com.pointlessapps.mypremiummobile.compose.dashboard
+package com.pointlessapps.mypremiummobile.compose.dashboard.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pointlessapps.mypremiummobile.compose.dashboard.model.*
+import com.pointlessapps.mypremiummobile.compose.model.Balance
+import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.InternetPackageResponse
@@ -94,7 +96,7 @@ internal class DashboardViewModel(
                 )
             }
             .catch { throwable ->
-                Timber.d(throwable)
+                Timber.e(throwable)
 
                 if (throwable is AuthorizationTokenExpiredException) {
                     eventChannel.send(DashboardEvent.MoveToLoginScreen)

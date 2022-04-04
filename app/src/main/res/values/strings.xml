@@ -33,4 +33,11 @@
 	<string name="services">Services</string>
 	<string name="documents">Documents</string>
 	<string name="help">Help</string>
+	<string name="negative_value_means_overpayment">"Negative value means overpayment "</string>
+	<string name="pay_with_payu">Pay with PayU</string>
+	<string name="invoices">Invoices</string>
+	<string name="more">More</string>
+	<string name="due">Due:</string>
+	<string name="invoice">Invoice</string>
+	<string name="billing">Billing</string>
 </resources>
