@@ -1,10 +1,7 @@
 package com.pointlessapps.mypremiummobile.remote.datasource.payments.service
 
 import com.pointlessapps.mypremiummobile.http.authorization.Authorize
-import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.BalanceResponseDto
-import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoiceResponseDto
-import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoicesBodyDto
-import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.PayWithPayUBodyDto
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.*
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -27,6 +24,16 @@ internal interface PaymentsService {
     suspend fun getInvoices(
         @Body invoicesBodyDto: InvoicesBodyDto,
     ): List<InvoiceResponseDto>
+
+    @Authorize
+    @GET("payments/getDeliveryMethod")
+    suspend fun getDeliveryMethods(): List<DeliveryMethodResponseDto>
+
+    @Authorize
+    @POST("payments/changeDeliveryMethod")
+    suspend fun changeDeliveryMethod(
+        @Body changeDeliveryMethodBodyDto: ChangeDeliveryMethodBodyDto,
+    )
 
     @Authorize
     @POST("payments/getInvoiceDocument")

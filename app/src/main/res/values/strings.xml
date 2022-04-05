@@ -45,4 +45,13 @@
 	<string name="resend_code">Resend code</string>
 	<string name="verification_code">Verification code</string>
 	<string name="incorrect_verification_code">Incorrect verification code. Please try again</string>
+	<string name="price">Price:</string>
+	<string name="free">Free</string>
+	<string name="invoice_delivery_method">Invoice delivery method</string>
+	<string name="confirm">Confirm</string>
+	<string name="cancel">Cancel</string>
+	<string name="warning">Warning</string>
+	<string name="enable">enable</string>
+	<string name="disable">disable</string>
+	<string name="confirmation_content">Do you want to <b>%s</b> \"%s\" for the number <b>%s</b>?</string>
 </resources>

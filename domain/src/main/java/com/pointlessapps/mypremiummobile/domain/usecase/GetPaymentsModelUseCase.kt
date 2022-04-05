@@ -2,6 +2,7 @@ package com.pointlessapps.mypremiummobile.domain.usecase
 
 import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
 import com.pointlessapps.mypremiummobile.domain.model.PaymentsModel
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetDeliveryMethodsUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetInvoicesUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentAmountUseCase
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
@@ -13,6 +14,7 @@ class GetPaymentsModelUseCase(
     private val getUserPhoneNumbersUseCase: GetUserPhoneNumbersUseCase,
     private val getPaymentAmountUseCase: GetPaymentAmountUseCase,
     private val getInvoicesUseCase: GetInvoicesUseCase,
+    private val getDeliveryMethodsUseCase: GetDeliveryMethodsUseCase,
 ) {
 
     companion object {
@@ -28,7 +30,8 @@ class GetPaymentsModelUseCase(
         getUserNameUseCase(),
         getPaymentAmountUseCase(),
         getInvoicesUseCase(threeMonthsAgo, today),
-    ) { phoneNumbers, userInfo, paymentAmount, invoices ->
+        getDeliveryMethodsUseCase(),
+    ) { phoneNumbers, userInfo, paymentAmount, invoices, deliveryMethods ->
         val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain })
 
         return@combine PaymentsModel(
@@ -36,6 +39,7 @@ class GetPaymentsModelUseCase(
             userInfo = userInfo,
             paymentAmount = paymentAmount,
             invoices = invoices,
+            deliveryMethods = deliveryMethods,
         )
     }
 }

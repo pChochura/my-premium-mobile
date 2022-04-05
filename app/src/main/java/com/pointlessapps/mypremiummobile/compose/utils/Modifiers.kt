@@ -31,3 +31,8 @@ internal fun Modifier.onFocusChanged(
         focusState = it
     }
 }
+
+internal inline fun Modifier.conditional(
+    condition: Boolean,
+    crossinline block: Modifier.() -> Modifier,
+) = if (condition) this.block() else this

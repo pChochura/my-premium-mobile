@@ -1,8 +1,10 @@
 package com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper
 
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
+import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.BalanceResponseDto
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.DeliveryMethodResponseDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoiceResponseDto
 import java.text.SimpleDateFormat
 
@@ -20,5 +22,15 @@ internal fun List<InvoiceResponseDto>.toInvoicesResponse(dateParser: SimpleDateF
         amount = it.amount,
         status = it.status.lowercase().toBooleanStrict(),
         paymentDeadlineExceeded = it.paymentDeadlineExceeded,
+    )
+}
+
+internal fun List<DeliveryMethodResponseDto>.toDeliveryMethods() = map {
+    DeliveryMethodResponse(
+        id = it.id,
+        method = it.method,
+        price = it.price,
+        status = it.status,
+        text = it.text,
     )
 }

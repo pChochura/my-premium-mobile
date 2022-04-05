@@ -2,6 +2,7 @@ package com.pointlessapps.mypremiummobile.domain.payments
 
 import com.pointlessapps.mypremiummobile.datasource.payments.PaymentsDatasource
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
+import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,10 @@ interface PaymentsRepository {
     fun getPaymentAmount(): Flow<Float>
 
     fun getInvoices(fromDate: Date, toDate: Date): Flow<List<InvoiceResponse>>
+
+    fun getDeliveryMethods(): Flow<List<DeliveryMethodResponse>>
+
+    fun changeDeliveryMethod(deliveryMethodId: Int, state: Boolean): Flow<Unit>
 
     fun downloadInvoice(invoiceNumber: String): Flow<String>
 
@@ -38,6 +43,14 @@ internal class PaymentRepositoryImpl(
 
     override fun getInvoices(fromDate: Date, toDate: Date): Flow<List<InvoiceResponse>> = flow {
         emit(paymentsDatasource.getInvoices(fromDate, toDate))
+    }.flowOn(Dispatchers.IO)
+
+    override fun getDeliveryMethods(): Flow<List<DeliveryMethodResponse>> = flow {
+        emit(paymentsDatasource.getDeliveryMethods())
+    }.flowOn(Dispatchers.IO)
+
+    override fun changeDeliveryMethod(deliveryMethodId: Int, state: Boolean): Flow<Unit> = flow {
+        emit(paymentsDatasource.changeDeliveryMethod(deliveryMethodId, state))
     }.flowOn(Dispatchers.IO)
 
     override fun downloadInvoice(invoiceNumber: String): Flow<String> = flow {

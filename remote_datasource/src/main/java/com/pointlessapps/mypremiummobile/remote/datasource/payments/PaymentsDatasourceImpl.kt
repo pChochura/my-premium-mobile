@@ -5,10 +5,13 @@ import android.net.Uri
 import android.os.Environment
 import com.pointlessapps.mypremiummobile.datasource.payments.PaymentsDatasource
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
+import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.ChangeDeliveryMethodBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoicesBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.PayWithPayUBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toBalanceResponse
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toDeliveryMethods
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toInvoicesResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.service.PaymentsService
 import okhttp3.MediaType.Companion.toMediaType
@@ -36,6 +39,17 @@ internal class PaymentsDatasourceImpl(
                 endDate = dateParser.format(toDate),
             ),
         ).toInvoicesResponse(dateParser)
+
+    override suspend fun getDeliveryMethods(): List<DeliveryMethodResponse> =
+        paymentsService.getDeliveryMethods().toDeliveryMethods()
+
+    override suspend fun changeDeliveryMethod(deliveryMethodId: Int, state: Boolean) =
+        paymentsService.changeDeliveryMethod(
+            ChangeDeliveryMethodBodyDto(
+                action = state,
+                methodId = deliveryMethodId,
+            ),
+        )
 
     @Throws(NullPointerException::class)
     @Suppress("BlockingMethodInNonBlockingContext")

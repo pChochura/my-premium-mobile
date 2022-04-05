@@ -1,6 +1,7 @@
 package com.pointlessapps.mypremiummobile.domain.model
 
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
+import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.PhoneNumberResponse
 
@@ -9,4 +10,5 @@ data class PaymentsModel(
     val userInfo: UserInfoResponse,
     val paymentAmount: Float,
     val invoices: List<InvoiceResponse>,
+    val deliveryMethods: List<DeliveryMethodResponse>,
 )
