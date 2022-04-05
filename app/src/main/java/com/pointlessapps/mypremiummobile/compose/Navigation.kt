@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import com.pointlessapps.mypremiummobile.compose.dashboard.ui.DashboardScreen
+import com.pointlessapps.mypremiummobile.compose.login.two.factor.ui.LoginTwoFactorScreen
 import com.pointlessapps.mypremiummobile.compose.login.ui.LoginScreen
 import com.pointlessapps.mypremiummobile.compose.payments.ui.PaymentsScreen
 import com.pointlessapps.mypremiummobile.compose.ui.theme.Route
@@ -23,6 +24,15 @@ internal fun NavHost(navController: NavController<Route>) {
     AnimatedNavHost(controller = navController) {
         when (it) {
             Route.Login -> LoginScreen(
+                onShowDashboard = {
+                    navController.popAll()
+                    navController.navigate(Route.Dashboard)
+                },
+                onShowTwoFactor = {
+                    navController.navigate(Route.LoginTwoFactor)
+                },
+            )
+            Route.LoginTwoFactor -> LoginTwoFactorScreen(
                 onShowDashboard = {
                     navController.popAll()
                     navController.navigate(Route.Dashboard)

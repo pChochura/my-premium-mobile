@@ -1,24 +1,37 @@
 package com.pointlessapps.mypremiummobile.compose.ui.theme
 
 import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
-internal sealed interface Route : Parcelable {
-    @Parcelize
-    object Login : Route
+@Suppress("PROPERTY_WONT_BE_SERIALIZED")
+internal sealed class Route : Parcelable {
+
+    @IgnoredOnParcel
+    open val showNavigationBar: Boolean = true
 
     @Parcelize
-    object Dashboard : Route
+    object Login : Route() {
+        override val showNavigationBar = false
+    }
 
     @Parcelize
-    object Payments : Route
+    object LoginTwoFactor : Route() {
+        override val showNavigationBar = false
+    }
 
     @Parcelize
-    object Services : Route
+    object Dashboard : Route()
 
     @Parcelize
-    object Documents : Route
+    object Payments : Route()
 
     @Parcelize
-    object Help : Route
+    object Services : Route()
+
+    @Parcelize
+    object Documents : Route()
+
+    @Parcelize
+    object Help : Route()
 }

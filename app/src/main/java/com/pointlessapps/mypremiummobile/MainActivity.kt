@@ -26,7 +26,6 @@ import com.pointlessapps.mypremiummobile.compose.ui.components.BottomNavigationB
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbar
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbarHostState
 import com.pointlessapps.mypremiummobile.compose.ui.theme.ProjectTheme
-import com.pointlessapps.mypremiummobile.compose.ui.theme.Route
 import dev.olshevski.navigation.reimagined.rememberNavController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -71,7 +70,7 @@ class MainActivity : ComponentActivity() {
                         )
                         NavHost(navController = navController)
 
-                        if (navController.backstack.entries.last().destination != Route.Login) {
+                        if (navController.backstack.entries.last().destination.showNavigationBar) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.BottomCenter,

@@ -17,6 +17,7 @@ internal class AuthorizationInterceptor(
     private val gson: Gson,
 ) : Interceptor {
 
+    @Throws(AuthorizationTokenExpiredException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         request

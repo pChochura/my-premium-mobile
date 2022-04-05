@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.pointlessapps.mypremiummobile.compose.model.InputModel
 import com.pointlessapps.mypremiummobile.domain.auth.usecase.LoginUseCase
 import com.pointlessapps.mypremiummobile.domain.validation.usecase.ValidateSimpleInputUseCase
+import com.pointlessapps.mypremiummobile.errors.AuthorizationTwoFactorException
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -23,6 +24,7 @@ internal data class LoginState(
 
 internal sealed interface LoginEvent {
     object MoveToNextScreen : LoginEvent
+    object MoveToTwoFactorAuth : LoginEvent
     data class ShowErrorMessage(@StringRes val message: Int) : LoginEvent
 }
 
@@ -76,8 +78,7 @@ internal class LoginViewModel(
     private fun isDataValid(
         login: String = state.login.value,
         password: String = state.password.value,
-    ): Boolean = validateSimpleInputUseCase(login) &&
-            validateSimpleInputUseCase(password)
+    ): Boolean = validateSimpleInputUseCase(login) && validateSimpleInputUseCase(password)
 
     fun onLoginClicked() {
         loginUseCase(state.login.value, state.password.value)
@@ -92,9 +93,16 @@ internal class LoginViewModel(
             .catch { throwable ->
                 Timber.e(throwable)
                 state = state.copy(isLoading = false)
-                eventChannel.send(
-                    LoginEvent.ShowErrorMessage(errorHandler.mapThrowableToErrorMessage(throwable)),
-                )
+
+                if (throwable is AuthorizationTwoFactorException) {
+                    eventChannel.send(LoginEvent.MoveToTwoFactorAuth)
+                } else {
+                    eventChannel.send(
+                        LoginEvent.ShowErrorMessage(
+                            errorHandler.mapThrowableToErrorMessage(throwable),
+                        ),
+                    )
+                }
             }
             .launchIn(viewModelScope)
     }

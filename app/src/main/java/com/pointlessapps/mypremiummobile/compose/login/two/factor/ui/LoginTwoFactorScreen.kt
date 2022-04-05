@@ -1,4 +1,4 @@
-package com.pointlessapps.mypremiummobile.compose.login.ui
+package com.pointlessapps.mypremiummobile.compose.login.two.factor.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -23,20 +23,17 @@ import org.koin.androidx.compose.getViewModel
 private const val LOGO_WIDTH_RATIO = 0.65f
 
 @Composable
-internal fun LoginScreen(
-    viewModel: LoginViewModel = getViewModel(),
+internal fun LoginTwoFactorScreen(
+    viewModel: LoginTwoFactorViewModel = getViewModel(),
     onShowDashboard: () -> Unit,
-    onShowTwoFactor: () -> Unit,
 ) {
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                LoginEvent.MoveToNextScreen ->
+                LoginTwoFactorEvent.MoveToNextScreen ->
                     onShowDashboard()
-                LoginEvent.MoveToTwoFactorAuth ->
-                    onShowTwoFactor()
-                is LoginEvent.ShowErrorMessage ->
+                is LoginTwoFactorEvent.ShowErrorMessage ->
                     snackbarHost.showSnackbar(event.message)
             }
         }
@@ -68,37 +65,21 @@ internal fun LoginScreen(
 
             ComposeTextField(
                 modifier = Modifier.padding(top = dimensionResource(id = R.dimen.big_padding)),
-                value = viewModel.state.login.value,
-                onValueChange = viewModel::onLoginChanged,
-                label = stringResource(id = R.string.login_or_phone_number),
-                onFocusLost = viewModel::onLoginEditingFinished,
-                onImeAction = { viewModel.onLoginEditingFinished() },
+                value = viewModel.state.code.value,
+                onValueChange = viewModel::onCodeChanged,
+                label = stringResource(id = R.string.verification_code),
+                onFocusLost = viewModel::onCodeEditingFinished,
+                onImeAction = { viewModel.onCodeEditingFinished(byImeAction = true) },
                 error = InputError(
-                    enabled = viewModel.state.login.error,
-                    errorMessage = stringResource(id = R.string.incorrect_login_or_phone_number),
-                ),
-                textFieldStyle = defaultComposeTextFieldStyle().copy(
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    placeholder = stringResource(id = R.string.enter_your_login),
-                ),
-            )
-
-            ComposeTextField(
-                value = viewModel.state.password.value,
-                onValueChange = viewModel::onPasswordChanged,
-                label = stringResource(id = R.string.password),
-                onFocusLost = viewModel::onPasswordEditingFinished,
-                onImeAction = { viewModel.onPasswordEditingFinished(byImeAction = true) },
-                error = InputError(
-                    enabled = viewModel.state.password.error,
-                    errorMessage = stringResource(id = R.string.incorrect_password),
+                    enabled = viewModel.state.code.error,
+                    errorMessage = stringResource(id = R.string.incorrect_code),
                 ),
                 textFieldStyle = defaultComposeTextFieldStyle().copy(
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
+                        keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done,
                     ),
-                    placeholder = stringResource(id = R.string.enter_your_password),
+                    placeholder = stringResource(id = R.string.enter_your_code),
                 ),
             )
 
@@ -111,7 +92,16 @@ internal fun LoginScreen(
                 text = stringResource(id = R.string.login),
                 onClick = viewModel::onLoginClicked,
                 buttonStyle = defaultComposeButtonStyle().copy(
-                    enabled = viewModel.state.isButtonEnabled,
+                    enabled = viewModel.state.isLoginButtonEnabled,
+                ),
+            )
+
+            ComposeButton(
+                modifier = Modifier.fillMaxWidth(LOGO_WIDTH_RATIO),
+                text = stringResource(id = R.string.resend_code),
+                onClick = viewModel::onResendCodeClicked,
+                buttonStyle = outlinedComposeButtonModel().copy(
+                    enabled = viewModel.state.isResendCodeButtonEnabled,
                 ),
             )
 

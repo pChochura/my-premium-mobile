@@ -2,9 +2,7 @@ package com.pointlessapps.mypremiummobile.domain.auth.di
 
 import com.pointlessapps.mypremiummobile.domain.auth.AuthRepository
 import com.pointlessapps.mypremiummobile.domain.auth.AuthRepositoryImpl
-import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
-import com.pointlessapps.mypremiummobile.domain.auth.usecase.IsLoggedInUseCase
-import com.pointlessapps.mypremiummobile.domain.auth.usecase.LoginUseCase
+import com.pointlessapps.mypremiummobile.domain.auth.usecase.*
 import org.koin.dsl.module
 
 internal val authModule = module {
@@ -29,6 +27,24 @@ internal val authModule = module {
 
     factory {
         GetUserNameUseCase(
+            authRepository = get(),
+        )
+    }
+
+    factory {
+        SendVerificationCodeUseCase(
+            authRepository = get(),
+        )
+    }
+
+    factory {
+        ResendVerificationCodeUseCase(
+            authRepository = get(),
+        )
+    }
+
+    factory {
+        ValidateVerificationCodeUseCase(
             authRepository = get(),
         )
     }

@@ -40,4 +40,9 @@
 	<string name="due">Due:</string>
 	<string name="invoice">Invoice</string>
 	<string name="billing">Billing</string>
+	<string name="incorrect_code">Incorrect code</string>
+	<string name="enter_your_code">Enter your code…</string>
+	<string name="resend_code">Resend code</string>
+	<string name="verification_code">Verification code</string>
+	<string name="incorrect_verification_code">Incorrect verification code. Please try again</string>
 </resources>

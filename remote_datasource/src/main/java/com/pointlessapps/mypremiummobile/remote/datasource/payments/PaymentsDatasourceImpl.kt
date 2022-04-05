@@ -37,6 +37,7 @@ internal class PaymentsDatasourceImpl(
             ),
         ).toInvoicesResponse(dateParser)
 
+    @Throws(NullPointerException::class)
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun downloadInvoice(invoiceNumber: String): String {
         val invoiceResponse = paymentsService.getInvoiceDocument(
@@ -51,6 +52,7 @@ internal class PaymentsDatasourceImpl(
         return saveFile(filename, body.bytes())
     }
 
+    @Throws(NullPointerException::class)
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun downloadBilling(invoiceNumber: String): String {
         val billingResponse = paymentsService.getBillingDocument(
@@ -65,6 +67,7 @@ internal class PaymentsDatasourceImpl(
         return saveFile(filename, body.bytes())
     }
 
+    @Throws(NullPointerException::class)
     private fun saveFile(filename: String, bytes: ByteArray): String {
         val downloadedFile = File(
             "${context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.path}${File.separator}" +

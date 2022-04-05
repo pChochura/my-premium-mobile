@@ -6,7 +6,7 @@ import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.LoginRespons
 internal fun RemoteLoginResponseDto?.toUserInfoResponse(): UserInfoResponse =
     requireNotNull(this).run {
         UserInfoResponse(
-            email = email,
-            name = name,
+            email = requireNotNull(email),
+            name = requireNotNull(name),
         )
     }

@@ -2,7 +2,11 @@ package com.pointlessapps.mypremiummobile.remote.datasource.auth
 
 import com.pointlessapps.mypremiummobile.datasource.auth.AuthDatasource
 import com.pointlessapps.mypremiummobile.datasource.auth.AuthorizationTokenStore
+import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
+import com.pointlessapps.mypremiummobile.errors.AuthorizationTwoFactorException
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.LoginBodyDto
+import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.ValidateCodeBodyDto
+import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.VerificationCodeBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.mapper.toUserInfoResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.service.AuthService
 
@@ -11,16 +15,46 @@ internal class AuthDatasourceImpl(
     private val authService: AuthService,
 ) : AuthDatasource {
 
-    override suspend fun login(login: String, password: String) = authService.login(
-        LoginBodyDto(
-            username = login,
-            password = password,
-        ),
-    ).also { authorizationTokenStore.setToken(it.token) }
-        .toUserInfoResponse()
+    override fun isLoggedIn() = authorizationTokenStore.getAuthToken() != null
+
+    @Throws(AuthorizationTwoFactorException::class)
+    override suspend fun login(login: String, password: String): UserInfoResponse {
+        val loginResponse = authService.login(
+            LoginBodyDto(
+                username = login,
+                password = password,
+            ),
+        )
+
+        authorizationTokenStore.setToken(loginResponse.token)
+
+        if (loginResponse.email == null || loginResponse.name == null) {
+            throw AuthorizationTwoFactorException()
+        }
+
+        return loginResponse.toUserInfoResponse()
+    }
 
     override suspend fun logout() = authService.logout()
         .also { authorizationTokenStore.setToken(null) }
 
-    override fun isLoggedIn() = authorizationTokenStore.getAuthToken() != null
+    override suspend fun sendVerificationCode() = authService.sendVerificationCode(
+        verificationCodeBodyDto = VerificationCodeBodyDto(
+            twoFactorToken = requireNotNull(authorizationTokenStore.getAuthToken()),
+        ),
+    ).success
+
+    override suspend fun resendVerificationCode() = authService.resendVerificationCode(
+        verificationCodeBodyDto = VerificationCodeBodyDto(
+            twoFactorToken = requireNotNull(authorizationTokenStore.getAuthToken()),
+        ),
+    ).success
+
+    override suspend fun validateCode(code: String) = authService.validateCode(
+        validateCodeBodyDto = ValidateCodeBodyDto(
+            oneTimeCode = code,
+            twoFactorToken = requireNotNull(authorizationTokenStore.getAuthToken()),
+        ),
+    ).also { authorizationTokenStore.setToken(it.token) }
+        .toUserInfoResponse()
 }

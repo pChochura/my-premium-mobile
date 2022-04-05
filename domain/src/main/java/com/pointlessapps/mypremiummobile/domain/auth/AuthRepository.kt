@@ -9,11 +9,17 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 interface AuthRepository {
+    fun isLoggedIn(): Boolean
+
     fun login(login: String, password: String): Flow<UserInfoResponse>
 
     fun logout(): Flow<Unit>
 
-    fun isLoggedIn(): Boolean
+    fun sendVerificationCode(): Flow<Boolean>
+
+    fun resendVerificationCode(): Flow<Boolean>
+
+    fun validateCode(code: String): Flow<UserInfoResponse>
 
     fun getUserName(): Flow<UserInfoResponse>
 }
@@ -23,6 +29,8 @@ internal class AuthRepositoryImpl(
     private val userInfoDatasource: UserInfoDatasource,
 ) : AuthRepository {
 
+    override fun isLoggedIn() = authDatasource.isLoggedIn()
+
     override fun login(login: String, password: String) = flow {
         emit(authDatasource.login(login, password))
     }.flowOn(Dispatchers.IO)
@@ -31,7 +39,17 @@ internal class AuthRepositoryImpl(
         emit(authDatasource.logout())
     }.flowOn(Dispatchers.IO)
 
-    override fun isLoggedIn() = authDatasource.isLoggedIn()
+    override fun sendVerificationCode() = flow {
+        emit(authDatasource.sendVerificationCode())
+    }.flowOn(Dispatchers.IO)
+
+    override fun resendVerificationCode() = flow {
+        emit(authDatasource.resendVerificationCode())
+    }.flowOn(Dispatchers.IO)
+
+    override fun validateCode(code: String) = flow {
+        emit(authDatasource.validateCode(code))
+    }.flowOn(Dispatchers.IO)
 
     override fun getUserName() = flow {
         emit(userInfoDatasource.getUserName())
