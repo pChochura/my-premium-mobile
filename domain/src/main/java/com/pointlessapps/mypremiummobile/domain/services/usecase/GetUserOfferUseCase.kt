@@ -6,5 +6,5 @@ class GetUserOfferUseCase(
     private val servicesRepository: ServicesRepository,
 ) {
 
-    fun prepare(phoneNumberId: String) = servicesRepository.getUserOffer(phoneNumberId)
+    operator fun invoke(phoneNumberId: String) = servicesRepository.getUserOffer(phoneNumberId)
 }

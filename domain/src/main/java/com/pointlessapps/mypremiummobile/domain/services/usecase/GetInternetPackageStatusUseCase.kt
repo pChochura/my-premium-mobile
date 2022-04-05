@@ -6,5 +6,6 @@ class GetInternetPackageStatusUseCase(
     private val servicesRepository: ServicesRepository,
 ) {
 
-    fun prepare(phoneNumberId: String) = servicesRepository.getInternetPackageStatus(phoneNumberId)
+    operator fun invoke(phoneNumberId: String) =
+        servicesRepository.getInternetPackageStatus(phoneNumberId)
 }

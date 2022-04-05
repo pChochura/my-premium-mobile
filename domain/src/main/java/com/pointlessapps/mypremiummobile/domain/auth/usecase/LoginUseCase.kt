@@ -6,5 +6,5 @@ class LoginUseCase(
     private val authRepository: AuthRepository,
 ) {
 
-    fun prepare(login: String, password: String) = authRepository.login(login, password)
+    operator fun invoke(login: String, password: String) = authRepository.login(login, password)
 }

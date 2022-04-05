@@ -6,23 +6,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pointlessapps.mypremiummobile.compose.dashboard.model.*
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.DashboardModel
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.InternetPackage
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.InternetPackageStatus
+import com.pointlessapps.mypremiummobile.compose.dashboard.model.UserOffer
 import com.pointlessapps.mypremiummobile.compose.model.Balance
 import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.InternetPackageResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.InternetPackageStatusResponse
+import com.pointlessapps.mypremiummobile.datasource.services.dto.PhoneNumberResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.UserOfferResponse
-import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetBalanceUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetInternetPackageStatusUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetInternetPackagesUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserOfferUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
+import com.pointlessapps.mypremiummobile.domain.usecase.GetDashboardModelUseCase
 import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -41,15 +39,9 @@ internal sealed interface DashboardEvent {
     data class ShowErrorMessage(@StringRes val message: Int) : DashboardEvent
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class DashboardViewModel(
     errorHandler: ErrorHandler,
-    getUserNameUseCase: GetUserNameUseCase,
-    getUserPhoneNumbersUseCase: GetUserPhoneNumbersUseCase,
-    getUserOfferUseCase: GetUserOfferUseCase,
-    getBalanceUseCase: GetBalanceUseCase,
-    getInternetPackageStatusUseCase: GetInternetPackageStatusUseCase,
-    getInternetPackagesUseCase: GetInternetPackagesUseCase,
+    getDashboardModelUseCase: GetDashboardModelUseCase,
 ) : ViewModel() {
 
     private val eventChannel = Channel<DashboardEvent>(Channel.RENDEZVOUS)
@@ -58,34 +50,21 @@ internal class DashboardViewModel(
     var state by mutableStateOf(DashboardState())
 
     init {
-        getUserPhoneNumbersUseCase.prepare()
+        getDashboardModelUseCase()
             .take(1)
             .onStart {
                 state = state.copy(isLoading = true)
             }
-            .flatMapLatest { phoneNumbers ->
-                val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain }).run {
-                    PhoneNumber(id = id, number = phoneNumber)
-                }
+            .onEach { model ->
+                val (userInfo, userOffer, balance, internetPackageStatus, internetPackages) = buildModel(
+                    userInfo = model.userInfo,
+                    phoneNumber = model.phoneNumber,
+                    userOffer = model.userOffer,
+                    balance = model.balance,
+                    internetPackageStatus = model.internetPackageStatus,
+                    internetPackages = model.internetPackages,
+                )
 
-                combine(
-                    getUserNameUseCase.prepare(),
-                    getUserOfferUseCase.prepare(phoneNumber.id),
-                    getBalanceUseCase.prepare(),
-                    getInternetPackageStatusUseCase.prepare(phoneNumber.id),
-                    getInternetPackagesUseCase.prepare(phoneNumber.id),
-                ) { userInfo, userOffer, balance, internetPackageStatus, internetPackages ->
-                    buildModel(
-                        userInfo = userInfo,
-                        phoneNumber = phoneNumber,
-                        userOffer = userOffer,
-                        balance = balance,
-                        internetPackageStatus = internetPackageStatus,
-                        internetPackages = internetPackages,
-                    )
-                }
-            }
-            .onEach { (userInfo, userOffer, balance, internetPackageStatus, internetPackages) ->
                 state = state.copy(
                     userInfo = userInfo,
                     userOffer = userOffer,
@@ -114,7 +93,7 @@ internal class DashboardViewModel(
 
     private fun buildModel(
         userInfo: UserInfoResponse,
-        phoneNumber: PhoneNumber,
+        phoneNumber: PhoneNumberResponse,
         userOffer: UserOfferResponse,
         balance: BalanceResponse,
         internetPackageStatus: InternetPackageStatusResponse,
@@ -123,7 +102,7 @@ internal class DashboardViewModel(
         userInfo = UserInfo(
             email = userInfo.email,
             name = userInfo.name,
-            phoneNumber = phoneNumber.number,
+            phoneNumber = phoneNumber.phoneNumber,
         ),
         userOffer = UserOffer(
             tariff = userOffer.tariff,

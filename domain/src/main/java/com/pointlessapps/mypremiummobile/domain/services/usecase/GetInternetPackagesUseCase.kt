@@ -6,5 +6,6 @@ class GetInternetPackagesUseCase(
     private val servicesRepository: ServicesRepository,
 ) {
 
-    fun prepare(phoneNumberId: String) = servicesRepository.getInternetPackages(phoneNumberId)
+    operator fun invoke(phoneNumberId: String) =
+        servicesRepository.getInternetPackages(phoneNumberId)
 }

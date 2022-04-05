@@ -6,5 +6,5 @@ class DownloadInvoiceUseCase(
     private val paymentsRepository: PaymentsRepository,
 ) {
 
-    fun prepare(invoiceNumber: String) = paymentsRepository.downloadInvoice(invoiceNumber)
+    operator fun invoke(invoiceNumber: String) = paymentsRepository.downloadInvoice(invoiceNumber)
 }

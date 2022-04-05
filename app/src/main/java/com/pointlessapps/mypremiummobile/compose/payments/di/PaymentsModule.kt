@@ -8,10 +8,7 @@ internal val paymentsModule = module {
     viewModel {
         PaymentsViewModel(
             errorHandler = get(),
-            getUserNameUseCase = get(),
-            getUserPhoneNumbersUseCase = get(),
-            getPaymentAmountUseCase = get(),
-            getInvoicesUseCase = get(),
+            getPaymentsModelUseCase = get(),
             downloadInvoiceUseCase = get(),
             downloadBillingUseCase = get(),
             getPayWithPayUUrlUseCase = get(),

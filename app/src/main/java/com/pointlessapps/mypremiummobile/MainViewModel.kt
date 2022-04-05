@@ -9,7 +9,7 @@ internal class MainViewModel(
 ) : ViewModel() {
 
     fun getStartDestination() = when {
-        isLoggedInUseCase.prepare() -> Route.Dashboard
+        isLoggedInUseCase() -> Route.Dashboard
         else -> Route.Login
     }
 }

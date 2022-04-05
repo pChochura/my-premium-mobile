@@ -7,16 +7,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pointlessapps.mypremiummobile.compose.dashboard.model.PhoneNumber
 import com.pointlessapps.mypremiummobile.compose.model.Balance
 import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import com.pointlessapps.mypremiummobile.compose.payments.model.Invoice
 import com.pointlessapps.mypremiummobile.compose.payments.model.PaymentsModel
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
-import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
-import com.pointlessapps.mypremiummobile.domain.payments.usecase.*
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
+import com.pointlessapps.mypremiummobile.datasource.services.dto.PhoneNumberResponse
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.DownloadBillingUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.DownloadInvoiceUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPayWithPayUUrlUseCase
+import com.pointlessapps.mypremiummobile.domain.usecase.GetPaymentsModelUseCase
 import com.pointlessapps.mypremiummobile.domain.utils.DateFormatter
 import com.pointlessapps.mypremiummobile.domain.utils.NumberFormatter
 import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
@@ -24,7 +25,6 @@ import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
-import java.util.*
 
 internal data class PaymentsState(
     val userInfo: UserInfo = UserInfo(),
@@ -42,10 +42,7 @@ internal sealed interface PaymentsEvent {
 
 internal class PaymentsViewModel(
     private val errorHandler: ErrorHandler,
-    getUserNameUseCase: GetUserNameUseCase,
-    getUserPhoneNumbersUseCase: GetUserPhoneNumbersUseCase,
-    getPaymentAmountUseCase: GetPaymentAmountUseCase,
-    getInvoicesUseCase: GetInvoicesUseCase,
+    getPaymentsModelUseCase: GetPaymentsModelUseCase,
     private val downloadInvoiceUseCase: DownloadInvoiceUseCase,
     private val downloadBillingUseCase: DownloadBillingUseCase,
     private val getPayWithPayUUrlUseCase: GetPayWithPayUUrlUseCase,
@@ -53,41 +50,24 @@ internal class PaymentsViewModel(
     private val numberFormatter: NumberFormatter,
 ) : ViewModel() {
 
-    companion object {
-        private const val THREE_MONTHS = 3
-    }
-
     private val eventChannel = Channel<PaymentsEvent>(Channel.RENDEZVOUS)
     val events = eventChannel.receiveAsFlow()
 
     var state by mutableStateOf(PaymentsState())
 
     init {
-        val today = Calendar.getInstance().time
-        val threeMonthsAgo =
-            Calendar.getInstance().apply { add(Calendar.MONTH, -THREE_MONTHS) }.time
-
-        combine(
-            getUserPhoneNumbersUseCase.prepare(),
-            getUserNameUseCase.prepare(),
-            getPaymentAmountUseCase.prepare(),
-            getInvoicesUseCase.prepare(threeMonthsAgo, today),
-        ) { phoneNumbers, userInfo, paymentAmount, invoices ->
-            val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain }).run {
-                PhoneNumber(id = id, number = phoneNumber)
-            }
-
-            buildModel(
-                userInfo = userInfo,
-                phoneNumber = phoneNumber,
-                paymentAmount = paymentAmount,
-                invoices = invoices,
-            )
-        }.take(1)
+        getPaymentsModelUseCase()
+            .take(1)
             .onStart {
                 state = state.copy(isLoading = true)
             }
-            .onEach { (userInfo, balance, invoices) ->
+            .onEach { model ->
+                val (userInfo, balance, invoices) = buildModel(
+                    phoneNumber = model.phoneNumber,
+                    userInfo = model.userInfo,
+                    paymentAmount = model.paymentAmount,
+                    invoices = model.invoices,
+                )
                 state = state.copy(
                     userInfo = userInfo,
                     balance = balance,
@@ -114,14 +94,14 @@ internal class PaymentsViewModel(
 
     private fun buildModel(
         userInfo: UserInfoResponse,
-        phoneNumber: PhoneNumber,
+        phoneNumber: PhoneNumberResponse,
         paymentAmount: Float,
         invoices: List<InvoiceResponse>,
     ) = PaymentsModel(
         userInfo = UserInfo(
             email = userInfo.email,
             name = userInfo.name,
-            phoneNumber = phoneNumber.number,
+            phoneNumber = phoneNumber.phoneNumber,
         ),
         balance = Balance(
             balance = numberFormatter.toFloatString(paymentAmount),
@@ -138,11 +118,11 @@ internal class PaymentsViewModel(
     )
 
     fun downloadInvoice(invoice: Invoice) = executeDownloadFile(
-        downloadInvoiceUseCase.prepare(invoice.invoiceNumber),
+        downloadInvoiceUseCase(invoice.invoiceNumber),
     )
 
     fun downloadBilling(invoice: Invoice) = executeDownloadFile(
-        downloadBillingUseCase.prepare(invoice.invoiceNumber),
+        downloadBillingUseCase(invoice.invoiceNumber),
     )
 
     private fun executeDownloadFile(flow: Flow<String>) {
@@ -168,8 +148,7 @@ internal class PaymentsViewModel(
     }
 
     fun payWithPayU() {
-        getPayWithPayUUrlUseCase
-            .prepare(numberFormatter.toFloat(state.balance.balance))
+        getPayWithPayUUrlUseCase(numberFormatter.toFloat(state.balance.balance))
             .take(1)
             .onStart {
                 state = state.copy(isLoading = true)

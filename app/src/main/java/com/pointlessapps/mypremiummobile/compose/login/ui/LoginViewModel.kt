@@ -48,7 +48,7 @@ internal class LoginViewModel(
         val login = state.login
         state = state.copy(
             login = login.copy(
-                error = !validateSimpleInputUseCase.prepare(login.value),
+                error = !validateSimpleInputUseCase(login.value),
             ),
         )
     }
@@ -64,7 +64,7 @@ internal class LoginViewModel(
         val password = state.password
         state = state.copy(
             password = password.copy(
-                error = !validateSimpleInputUseCase.prepare(password.value),
+                error = !validateSimpleInputUseCase(password.value),
             ),
         )
 
@@ -76,12 +76,11 @@ internal class LoginViewModel(
     private fun isDataValid(
         login: String = state.login.value,
         password: String = state.password.value,
-    ): Boolean = validateSimpleInputUseCase.prepare(login) &&
-            validateSimpleInputUseCase.prepare(password)
+    ): Boolean = validateSimpleInputUseCase(login) &&
+            validateSimpleInputUseCase(password)
 
     fun onLoginClicked() {
-        loginUseCase
-            .prepare(state.login.value, state.password.value)
+        loginUseCase(state.login.value, state.password.value)
             .take(1)
             .onStart {
                 state = state.copy(isLoading = true)

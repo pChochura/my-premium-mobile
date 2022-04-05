@@ -6,6 +6,6 @@ class ValidateSimpleInputUseCase(
     private val repository: ValidationRepository,
 ) {
 
-    fun prepare(input: String?): Boolean =
+    operator fun invoke(input: String?): Boolean =
         repository.isInputNotNullAndBlank(candidate = input)
 }

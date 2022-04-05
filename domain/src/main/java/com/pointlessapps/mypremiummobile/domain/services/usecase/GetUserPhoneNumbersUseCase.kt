@@ -6,5 +6,5 @@ class GetUserPhoneNumbersUseCase(
     private val servicesRepository: ServicesRepository,
 ) {
 
-    fun prepare() = servicesRepository.getUserPhoneNumbers()
+    operator fun invoke() = servicesRepository.getUserPhoneNumbers()
 }

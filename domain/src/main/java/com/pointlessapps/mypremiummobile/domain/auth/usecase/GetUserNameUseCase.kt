@@ -6,5 +6,5 @@ class GetUserNameUseCase(
     private val authRepository: AuthRepository,
 ) {
 
-    fun prepare() = authRepository.getUserName()
+    operator fun invoke() = authRepository.getUserName()
 }

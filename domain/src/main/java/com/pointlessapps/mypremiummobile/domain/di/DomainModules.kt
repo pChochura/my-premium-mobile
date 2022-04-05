@@ -7,6 +7,7 @@ import com.pointlessapps.mypremiummobile.domain.utils.di.utilsModule
 import com.pointlessapps.mypremiummobile.domain.validation.di.validationModule
 
 val domainModules = listOf(
+    domainModule,
     authModule,
     validationModule,
     paymentsModule,

@@ -6,5 +6,5 @@ class IsLoggedInUseCase(
     private val authRepository: AuthRepository,
 ) {
 
-    fun prepare() = authRepository.isLoggedIn()
+    operator fun invoke() = authRepository.isLoggedIn()
 }

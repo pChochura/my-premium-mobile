@@ -7,5 +7,6 @@ class GetInvoicesUseCase(
     private val paymentsRepository: PaymentsRepository,
 ) {
 
-    fun prepare(fromDate: Date, toDate: Date) = paymentsRepository.getInvoices(fromDate, toDate)
+    operator fun invoke(fromDate: Date, toDate: Date) =
+        paymentsRepository.getInvoices(fromDate, toDate)
 }

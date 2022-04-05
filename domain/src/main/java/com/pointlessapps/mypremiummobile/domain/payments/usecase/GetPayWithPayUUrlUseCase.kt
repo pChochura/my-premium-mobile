@@ -6,5 +6,5 @@ class GetPayWithPayUUrlUseCase(
     private val paymentsRepository: PaymentsRepository,
 ) {
 
-    fun prepare(amount: Float) = paymentsRepository.getPayWithPayUUrl(amount)
+    operator fun invoke(amount: Float) = paymentsRepository.getPayWithPayUUrl(amount)
 }

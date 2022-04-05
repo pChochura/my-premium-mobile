@@ -6,5 +6,5 @@ class GetBalanceUseCase(
     private val paymentsRepository: PaymentsRepository,
 ) {
 
-    fun prepare() = paymentsRepository.getBalance()
+    operator fun invoke() = paymentsRepository.getBalance()
 }

@@ -6,5 +6,5 @@ class GetPaymentAmountUseCase(
     private val paymentsRepository: PaymentsRepository,
 ) {
 
-    fun prepare() = paymentsRepository.getPaymentAmount()
+    operator fun invoke() = paymentsRepository.getPaymentAmount()
 }
