@@ -18,6 +18,7 @@ import com.pointlessapps.mypremiummobile.domain.auth.usecase.GetUserNameUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.*
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
 import com.pointlessapps.mypremiummobile.domain.utils.DateFormatter
+import com.pointlessapps.mypremiummobile.domain.utils.NumberFormatter
 import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
 import kotlinx.coroutines.channels.Channel
@@ -49,6 +50,7 @@ internal class PaymentsViewModel(
     private val downloadBillingUseCase: DownloadBillingUseCase,
     private val getPayWithPayUUrlUseCase: GetPayWithPayUUrlUseCase,
     private val dateFormatter: DateFormatter,
+    private val numberFormatter: NumberFormatter,
 ) : ViewModel() {
 
     companion object {
@@ -122,7 +124,7 @@ internal class PaymentsViewModel(
             phoneNumber = phoneNumber.number,
         ),
         balance = Balance(
-            balance = paymentAmount.toString().replace('.', ','),
+            balance = numberFormatter.toFloatString(paymentAmount),
         ),
         invoices = invoices.map {
             Invoice(
@@ -167,7 +169,7 @@ internal class PaymentsViewModel(
 
     fun payWithPayU() {
         getPayWithPayUUrlUseCase
-            .prepare(state.balance.balance.replace(',', '.').toFloat())
+            .prepare(numberFormatter.toFloat(state.balance.balance))
             .take(1)
             .onStart {
                 state = state.copy(isLoading = true)

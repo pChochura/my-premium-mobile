@@ -16,6 +16,7 @@ internal val paymentsModule = module {
             downloadBillingUseCase = get(),
             getPayWithPayUUrlUseCase = get(),
             dateFormatter = get(),
+            numberFormatter = get(),
         )
     }
 }
