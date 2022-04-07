@@ -95,6 +95,7 @@ dependencies {
     implementation(AndroidX.core)
 
     implementation(Compose.ActivityCompose)
+    implementation(Compose.ConstraintLayout)
     implementation(Compose.ViewModel)
     implementation(Compose.Material)
     implementation(Compose.Ui)

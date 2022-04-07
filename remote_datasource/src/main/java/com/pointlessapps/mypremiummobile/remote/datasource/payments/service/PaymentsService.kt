@@ -22,8 +22,14 @@ internal interface PaymentsService {
     @Authorize
     @POST("payments/getInvoices")
     suspend fun getInvoices(
-        @Body invoicesBodyDto: InvoicesBodyDto,
+        @Body dateRangeBodyDto: DateRangeBodyDto,
     ): List<InvoiceResponseDto>
+
+    @Authorize
+    @POST("payments/getPayments")
+    suspend fun getPayments(
+        @Body dateRangeBodyDto: DateRangeBodyDto,
+    ): List<PaymentResponseDto>
 
     @Authorize
     @GET("payments/getDeliveryMethod")

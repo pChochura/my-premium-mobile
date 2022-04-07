@@ -40,6 +40,8 @@ object Compose {
     const val ViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
 
     const val NavigationReimagined = "dev.olshevski.navigation:reimagined:1.1.0"
+
+    const val ConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 }
 
 object Detekt {

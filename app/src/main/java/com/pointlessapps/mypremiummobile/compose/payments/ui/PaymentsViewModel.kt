@@ -11,10 +11,12 @@ import com.pointlessapps.mypremiummobile.compose.model.Balance
 import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 import com.pointlessapps.mypremiummobile.compose.payments.model.DeliveryMethod
 import com.pointlessapps.mypremiummobile.compose.payments.model.Invoice
+import com.pointlessapps.mypremiummobile.compose.payments.model.Payment
 import com.pointlessapps.mypremiummobile.compose.payments.model.PaymentsModel
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
+import com.pointlessapps.mypremiummobile.datasource.payments.dto.PaymentResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.PhoneNumberResponse
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.*
 import com.pointlessapps.mypremiummobile.domain.usecase.GetPaymentsModelUseCase
@@ -32,6 +34,7 @@ internal data class PaymentsState(
     val userInfo: UserInfo = UserInfo(),
     val balance: Balance = Balance(),
     val invoices: List<Invoice> = emptyList(),
+    val payments: List<Payment> = emptyList(),
     val deliveryMethods: List<DeliveryMethod> = emptyList(),
     val isLoading: Boolean = false,
 )
@@ -73,17 +76,19 @@ internal class PaymentsViewModel(
                 state = state.copy(isLoading = true)
             }
             .onEach { model ->
-                val (userInfo, balance, invoices, deliveryMethods) = buildModel(
+                val (userInfo, balance, invoices, payments, deliveryMethods) = buildModel(
                     phoneNumber = model.phoneNumber,
                     userInfo = model.userInfo,
                     paymentAmount = model.paymentAmount,
                     invoices = model.invoices,
+                    payments = model.payments,
                     deliveryMethods = model.deliveryMethods,
                 )
                 state = state.copy(
                     userInfo = userInfo,
                     balance = balance,
                     invoices = invoices,
+                    payments = payments,
                     deliveryMethods = deliveryMethods,
                     isLoading = false,
                 )
@@ -110,6 +115,7 @@ internal class PaymentsViewModel(
         phoneNumber: PhoneNumberResponse,
         paymentAmount: Float,
         invoices: List<InvoiceResponse>,
+        payments: List<PaymentResponse>,
         deliveryMethods: List<DeliveryMethodResponse>,
     ) = PaymentsModel(
         userInfo = UserInfo(
@@ -127,6 +133,14 @@ internal class PaymentsViewModel(
                 paymentDate = dateFormatter.formatDate(it.paymentDate),
                 amount = it.amount,
                 isPaid = it.status,
+            )
+        },
+        payments = payments.map {
+            Payment(
+                title = it.title,
+                amount = numberFormatter.toFloatString(it.amount),
+                paymentDate = dateFormatter.formatDate(it.paymentDate),
+                postingDate = dateFormatter.formatDate(it.postingDate),
             )
         },
         deliveryMethods = mapDeliveryMethods(deliveryMethods),

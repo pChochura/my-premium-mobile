@@ -54,4 +54,6 @@
 	<string name="enable">enable</string>
 	<string name="disable">disable</string>
 	<string name="confirmation_content">Do you want to <b>%s</b> \"%s\" for the number <b>%s</b>?</string>
+	<string name="payment_date">Payment date:</string>
+	<string name="posting_date">Posting date:</string>
 </resources>

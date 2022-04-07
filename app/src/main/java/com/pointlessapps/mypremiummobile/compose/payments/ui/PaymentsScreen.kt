@@ -19,11 +19,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.pointlessapps.mypremiummobile.LocalSnackbarHostState
 import com.pointlessapps.mypremiummobile.R
 import com.pointlessapps.mypremiummobile.compose.model.Balance
 import com.pointlessapps.mypremiummobile.compose.payments.model.DeliveryMethod
 import com.pointlessapps.mypremiummobile.compose.payments.model.Invoice
+import com.pointlessapps.mypremiummobile.compose.payments.model.Payment
 import com.pointlessapps.mypremiummobile.compose.ui.components.*
 import org.koin.androidx.compose.getViewModel
 
@@ -111,6 +114,9 @@ internal fun PaymentsScreen(
                 invoices = viewModel.state.invoices,
                 onDownloadInvoice = viewModel::downloadInvoice,
                 onDownloadBilling = viewModel::downloadBilling,
+            )
+            PaymentsCard(
+                payments = viewModel.state.payments,
             )
         }
     }
@@ -349,17 +355,22 @@ private fun InvoiceRow(
     onDownloadBilling: (Invoice) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding))) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
-        ) {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            val (title, date) = createRefs()
+
             ComposeText(
                 text = invoice.invoiceNumber,
                 textStyle = defaultComposeTextStyle().copy(
                     textColor = MaterialTheme.colors.onSurface,
                     typography = MaterialTheme.typography.body1,
                 ),
+                modifier = Modifier.constrainAs(title) {
+                    centerVerticallyTo(parent)
+                    start.linkTo(parent.start)
+                    end.linkTo(date.start)
+
+                    width = Dimension.fillToConstraints
+                },
             )
             ComposeText(
                 text = invoice.invoiceDate,
@@ -368,6 +379,13 @@ private fun InvoiceRow(
                     typography = MaterialTheme.typography.caption,
                     textAlign = TextAlign.End,
                 ),
+                modifier = Modifier.constrainAs(date) {
+                    centerVerticallyTo(parent)
+                    start.linkTo(title.end)
+                    end.linkTo(parent.end)
+
+                    width = Dimension.wrapContent
+                },
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.tiny_padding))) {
@@ -440,6 +458,147 @@ private fun InvoiceRow(
                     ),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun PaymentsCard(payments: List<Payment>) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ComposeText(
+                text = stringResource(id = R.string.payments),
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = colorResource(id = R.color.grey),
+                    typography = MaterialTheme.typography.h3,
+                ),
+            )
+
+            Row(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable { /*TODO*/ }
+                    .padding(horizontal = dimensionResource(id = R.dimen.tiny_padding)),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                ComposeText(
+                    text = stringResource(id = R.string.more),
+                    textStyle = defaultComposeTextStyle().copy(
+                        textColor = colorResource(id = R.color.grey),
+                        typography = MaterialTheme.typography.body1,
+                        textAlign = TextAlign.End,
+                    ),
+                )
+                Icon(
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.icon_size)),
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.grey),
+                )
+            }
+        }
+
+        Surface(
+            color = MaterialTheme.colors.surface,
+            shape = MaterialTheme.shapes.medium,
+            elevation = dimensionResource(id = R.dimen.default_elevation),
+        ) {
+            Column(
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
+            ) {
+                val items = payments.take(MAX_ITEMS_DISPLAYED)
+                items.forEachIndexed { index, item ->
+                    PaymentRow(payment = item)
+
+                    if (index != items.lastIndex) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(dimensionResource(id = R.dimen.divider_height))
+                                .background(colorResource(id = R.color.accent_variant)),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PaymentRow(payment: Payment) {
+    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding))) {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            val (title, amount) = createRefs()
+
+            ComposeText(
+                text = payment.title,
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = MaterialTheme.colors.onSurface,
+                    typography = MaterialTheme.typography.body1,
+                ),
+                modifier = Modifier.constrainAs(title) {
+                    centerVerticallyTo(parent)
+                    start.linkTo(parent.start)
+                    end.linkTo(amount.start)
+
+                    width = Dimension.fillToConstraints
+                },
+            )
+            ComposeText(
+                text = stringResource(id = R.string.amount_value, payment.amount),
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = MaterialTheme.colors.onSurface,
+                    typography = MaterialTheme.typography.caption,
+                    textAlign = TextAlign.End,
+                ),
+                modifier = Modifier.constrainAs(amount) {
+                    centerVerticallyTo(parent)
+                    start.linkTo(title.end)
+                    end.linkTo(parent.end)
+
+                    width = Dimension.wrapContent
+                },
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.tiny_padding))) {
+            ComposeText(
+                text = stringResource(id = R.string.payment_date),
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = MaterialTheme.colors.onSurface,
+                    typography = MaterialTheme.typography.caption,
+                ),
+            )
+            ComposeText(
+                text = payment.paymentDate,
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = colorResource(id = R.color.accent),
+                    typography = MaterialTheme.typography.caption,
+                ),
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.tiny_padding))) {
+            ComposeText(
+                text = stringResource(id = R.string.posting_date),
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = MaterialTheme.colors.onSurface,
+                    typography = MaterialTheme.typography.caption,
+                ),
+            )
+            ComposeText(
+                text = payment.postingDate,
+                textStyle = defaultComposeTextStyle().copy(
+                    textColor = colorResource(id = R.color.accent),
+                    typography = MaterialTheme.typography.caption,
+                ),
+            )
         }
     }
 }

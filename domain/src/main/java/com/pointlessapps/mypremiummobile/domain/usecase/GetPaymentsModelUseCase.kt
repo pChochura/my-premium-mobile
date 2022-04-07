@@ -5,8 +5,10 @@ import com.pointlessapps.mypremiummobile.domain.model.PaymentsModel
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetDeliveryMethodsUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetInvoicesUseCase
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentAmountUseCase
+import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentsUseCase
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
-import kotlinx.coroutines.flow.combine
+import com.pointlessapps.mypremiummobile.domain.utils.combine
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 class GetPaymentsModelUseCase(
@@ -14,6 +16,7 @@ class GetPaymentsModelUseCase(
     private val getUserPhoneNumbersUseCase: GetUserPhoneNumbersUseCase,
     private val getPaymentAmountUseCase: GetPaymentAmountUseCase,
     private val getInvoicesUseCase: GetInvoicesUseCase,
+    private val getPaymentsUseCase: GetPaymentsUseCase,
     private val getDeliveryMethodsUseCase: GetDeliveryMethodsUseCase,
 ) {
 
@@ -25,21 +28,25 @@ class GetPaymentsModelUseCase(
         }.time
     }
 
-    operator fun invoke() = combine(
-        getUserPhoneNumbersUseCase(),
-        getUserNameUseCase(),
-        getPaymentAmountUseCase(),
-        getInvoicesUseCase(threeMonthsAgo, today),
-        getDeliveryMethodsUseCase(),
-    ) { phoneNumbers, userInfo, paymentAmount, invoices, deliveryMethods ->
-        val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain })
+    operator fun invoke(): Flow<PaymentsModel> {
+        return combine(
+            getUserPhoneNumbersUseCase(),
+            getUserNameUseCase(),
+            getPaymentAmountUseCase(),
+            getInvoicesUseCase(threeMonthsAgo, today),
+            getPaymentsUseCase(threeMonthsAgo, today),
+            getDeliveryMethodsUseCase(),
+        ) { phoneNumbers, userInfo, paymentAmount, invoices, payments, deliveryMethods ->
+            val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain })
 
-        return@combine PaymentsModel(
-            phoneNumber = phoneNumber,
-            userInfo = userInfo,
-            paymentAmount = paymentAmount,
-            invoices = invoices,
-            deliveryMethods = deliveryMethods,
-        )
+            return@combine PaymentsModel(
+                phoneNumber = phoneNumber,
+                userInfo = userInfo,
+                paymentAmount = paymentAmount,
+                invoices = invoices,
+                payments = payments,
+                deliveryMethods = deliveryMethods,
+            )
+        }
     }
 }

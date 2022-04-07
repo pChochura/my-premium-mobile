@@ -7,12 +7,14 @@ import com.pointlessapps.mypremiummobile.datasource.payments.PaymentsDatasource
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.InvoiceResponse
+import com.pointlessapps.mypremiummobile.datasource.payments.dto.PaymentResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.ChangeDeliveryMethodBodyDto
-import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.InvoicesBodyDto
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.DateRangeBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.dto.PayWithPayUBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toBalanceResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toDeliveryMethods
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toInvoicesResponse
+import com.pointlessapps.mypremiummobile.remote.datasource.payments.mapper.toPaymentsResponse
 import com.pointlessapps.mypremiummobile.remote.datasource.payments.service.PaymentsService
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -34,11 +36,19 @@ internal class PaymentsDatasourceImpl(
 
     override suspend fun getInvoices(fromDate: Date, toDate: Date): List<InvoiceResponse> =
         paymentsService.getInvoices(
-            InvoicesBodyDto(
+            DateRangeBodyDto(
                 startDate = dateParser.format(fromDate),
                 endDate = dateParser.format(toDate),
             ),
         ).toInvoicesResponse(dateParser)
+
+    override suspend fun getPayments(fromDate: Date, toDate: Date): List<PaymentResponse> =
+        paymentsService.getPayments(
+            DateRangeBodyDto(
+                startDate = dateParser.format(fromDate),
+                endDate = dateParser.format(toDate),
+            ),
+        ).toPaymentsResponse(dateParser)
 
     override suspend fun getDeliveryMethods(): List<DeliveryMethodResponse> =
         paymentsService.getDeliveryMethods().toDeliveryMethods()

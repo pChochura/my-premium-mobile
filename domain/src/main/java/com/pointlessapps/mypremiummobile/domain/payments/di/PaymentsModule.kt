@@ -31,6 +31,12 @@ internal val paymentsModule = module {
     }
 
     factory {
+        GetPaymentsUseCase(
+            paymentsRepository = get(),
+        )
+    }
+
+    factory {
         GetDeliveryMethodsUseCase(
             paymentsRepository = get(),
         )

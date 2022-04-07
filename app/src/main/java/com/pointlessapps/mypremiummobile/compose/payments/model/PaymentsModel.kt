@@ -10,5 +10,6 @@ data class PaymentsModel(
     val userInfo: UserInfo,
     val balance: Balance,
     val invoices: List<Invoice>,
+    val payments: List<Payment>,
     val deliveryMethods: List<DeliveryMethod>,
 ) : Parcelable

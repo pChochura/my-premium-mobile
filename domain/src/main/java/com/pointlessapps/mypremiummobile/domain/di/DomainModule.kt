@@ -11,6 +11,7 @@ internal val domainModule = module {
             getUserPhoneNumbersUseCase = get(),
             getPaymentAmountUseCase = get(),
             getInvoicesUseCase = get(),
+            getPaymentsUseCase = get(),
             getDeliveryMethodsUseCase = get(),
         )
     }
