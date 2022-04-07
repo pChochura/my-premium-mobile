@@ -13,4 +13,6 @@ interface ServicesDatasource {
     suspend fun getInternetPackageStatus(phoneNumberId: String): InternetPackageStatusResponse
 
     suspend fun getInternetPackages(phoneNumberId: String): List<InternetPackageResponse>
+
+    suspend fun buyInternetPackage(phoneNumberId: String, packageId: Int)
 }

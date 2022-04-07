@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pointlessapps.mypremiummobile.R
 import com.pointlessapps.mypremiummobile.compose.dashboard.model.DashboardModel
 import com.pointlessapps.mypremiummobile.compose.dashboard.model.InternetPackage
 import com.pointlessapps.mypremiummobile.compose.dashboard.model.InternetPackageStatus
@@ -18,11 +19,13 @@ import com.pointlessapps.mypremiummobile.datasource.services.dto.InternetPackage
 import com.pointlessapps.mypremiummobile.datasource.services.dto.InternetPackageStatusResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.PhoneNumberResponse
 import com.pointlessapps.mypremiummobile.datasource.services.dto.UserOfferResponse
+import com.pointlessapps.mypremiummobile.domain.services.usecase.BuyInternetPackageUseCase
 import com.pointlessapps.mypremiummobile.domain.usecase.GetDashboardModelUseCase
 import com.pointlessapps.mypremiummobile.errors.AuthorizationTokenExpiredException
 import com.pointlessapps.mypremiummobile.utils.errors.ErrorHandler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 internal data class DashboardState(
@@ -36,12 +39,18 @@ internal data class DashboardState(
 
 internal sealed interface DashboardEvent {
     object MoveToLoginScreen : DashboardEvent
-    data class ShowErrorMessage(@StringRes val message: Int) : DashboardEvent
+    data class ShowMessage(@StringRes val message: Int) : DashboardEvent
+    data class ShowConfirmationDialog(
+        val name: String,
+        val number: String,
+        val onConfirm: () -> Unit,
+    ) : DashboardEvent
 }
 
 internal class DashboardViewModel(
-    errorHandler: ErrorHandler,
+    private val errorHandler: ErrorHandler,
     getDashboardModelUseCase: GetDashboardModelUseCase,
+    private val buyInternetPackageUseCase: BuyInternetPackageUseCase,
 ) : ViewModel() {
 
     private val eventChannel = Channel<DashboardEvent>(Channel.RENDEZVOUS)
@@ -83,7 +92,7 @@ internal class DashboardViewModel(
 
                 state = state.copy(isLoading = false)
                 eventChannel.send(
-                    DashboardEvent.ShowErrorMessage(
+                    DashboardEvent.ShowMessage(
                         errorHandler.mapThrowableToErrorMessage(throwable),
                     ),
                 )
@@ -129,4 +138,40 @@ internal class DashboardViewModel(
             )
         },
     )
+
+    fun buyInternetPackage(internetPackage: InternetPackage) {
+        viewModelScope.launch {
+            eventChannel.send(
+                DashboardEvent.ShowConfirmationDialog(
+                    name = internetPackage.name,
+                    number = requireNotNull(state.userInfo.phoneNumber),
+                    onConfirm = { executeBuyInternetPackage(internetPackage.id) },
+                ),
+            )
+        }
+    }
+
+    private fun executeBuyInternetPackage(id: Int) {
+        buyInternetPackageUseCase(requireNotNull(state.userInfo.phoneNumber), id)
+            .take(1)
+            .onStart {
+                state = state.copy(isLoading = true)
+            }
+            .onEach {
+                state = state.copy(isLoading = false)
+
+                eventChannel.send(
+                    DashboardEvent.ShowMessage(R.string.succesfully_bought_internet_package),
+                )
+            }
+            .catch { throwable ->
+                Timber.e(throwable)
+
+                state = state.copy(isLoading = false)
+                eventChannel.send(
+                    DashboardEvent.ShowMessage(errorHandler.mapThrowableToErrorMessage(throwable)),
+                )
+            }
+            .launchIn(viewModelScope)
+    }
 }

@@ -1,6 +1,7 @@
 package com.pointlessapps.mypremiummobile.compose.payments.ui
 
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -326,6 +327,10 @@ private fun InvoicesCard(
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
             ) {
+                if (invoices.isEmpty()) {
+                    EmptyRow(R.string.no_invoices)
+                }
+
                 val items = invoices.take(MAX_ITEMS_DISPLAYED)
                 items.forEachIndexed { index, item ->
                     InvoiceRow(
@@ -514,6 +519,10 @@ private fun PaymentsCard(payments: List<Payment>) {
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
             ) {
+                if (payments.isEmpty()) {
+                    EmptyRow(R.string.no_payments)
+                }
+
                 val items = payments.take(MAX_ITEMS_DISPLAYED)
                 items.forEachIndexed { index, item ->
                     PaymentRow(payment = item)
@@ -560,7 +569,7 @@ private fun PaymentRow(payment: Payment) {
                     textAlign = TextAlign.End,
                 ),
                 modifier = Modifier.constrainAs(amount) {
-                    centerVerticallyTo(parent)
+                    top.linkTo(parent.top)
                     start.linkTo(title.end)
                     end.linkTo(parent.end)
 
@@ -601,6 +610,21 @@ private fun PaymentRow(payment: Payment) {
             )
         }
     }
+}
+
+@Composable
+private fun EmptyRow(@StringRes text: Int) {
+    ComposeText(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(id = R.dimen.medium_padding)),
+        text = stringResource(id = text),
+        textStyle = defaultComposeTextStyle().copy(
+            typography = MaterialTheme.typography.h3,
+            textColor = MaterialTheme.colors.onBackground,
+            textAlign = TextAlign.Center,
+        ),
+    )
 }
 
 private data class ConfirmationDialogData(

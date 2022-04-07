@@ -56,4 +56,8 @@
 	<string name="confirmation_content">Do you want to <b>%s</b> \"%s\" for the number <b>%s</b>?</string>
 	<string name="payment_date">Payment date:</string>
 	<string name="posting_date">Posting date:</string>
+	<string name="buy">buy</string>
+	<string name="succesfully_bought_internet_package">You succesfully bought an internet package</string>
+	<string name="no_invoices">No invoices</string>
+	<string name="no_payments">No payments</string>
 </resources>

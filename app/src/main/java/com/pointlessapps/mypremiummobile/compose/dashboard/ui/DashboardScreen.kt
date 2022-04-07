@@ -11,8 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,16 +35,43 @@ internal fun DashboardScreen(
     onShowLogin: () -> Unit,
     onShowPayments: () -> Unit,
 ) {
+    var confirmationDialogData by remember { mutableStateOf<ConfirmationDialogData?>(null) }
     val snackbarHost = LocalSnackbarHostState.current
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 DashboardEvent.MoveToLoginScreen ->
                     onShowLogin()
-                is DashboardEvent.ShowErrorMessage ->
+                is DashboardEvent.ShowMessage ->
                     snackbarHost.showSnackbar(event.message)
+                is DashboardEvent.ShowConfirmationDialog ->
+                    confirmationDialogData = ConfirmationDialogData(
+                        name = event.name,
+                        number = event.number,
+                        onConfirm = event.onConfirm,
+                    )
             }
         }
+    }
+
+    confirmationDialogData?.let {
+        ComposeDialog(
+            title = stringResource(id = R.string.warning),
+            content = stringResource(
+                id = R.string.confirmation_content,
+                stringResource(id = R.string.buy),
+                it.name,
+                it.number,
+            ),
+            primaryButtonText = stringResource(id = R.string.confirm),
+            onPrimaryButtonClick = {
+                it.onConfirm()
+                confirmationDialogData = null
+            },
+            secondaryButtonText = stringResource(id = R.string.cancel),
+            onSecondaryButtonClick = { confirmationDialogData = null },
+            onDismissRequest = { confirmationDialogData = null },
+        )
     }
 
     ComposeLoader(enabled = viewModel.state.isLoading)
@@ -69,7 +95,10 @@ internal fun DashboardScreen(
                 onShowPaymentDetails = onShowPayments,
             )
             YourOfferCard(viewModel.state.userOffer, viewModel.state.internetPackageStatus)
-            AdditionalInternetPackageList(viewModel.state.internetPackages)
+            AdditionalInternetPackageList(
+                internetPackages = viewModel.state.internetPackages,
+                onBuyInternetPackage = viewModel::buyInternetPackage,
+            )
         }
     }
 }
@@ -271,7 +300,10 @@ private fun YourOfferRow(label: String, value: String) {
 }
 
 @Composable
-private fun AdditionalInternetPackageList(internetPackages: List<InternetPackage>) {
+private fun AdditionalInternetPackageList(
+    internetPackages: List<InternetPackage>,
+    onBuyInternetPackage: (InternetPackage) -> Unit,
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding)),
     ) {
@@ -293,7 +325,7 @@ private fun AdditionalInternetPackageList(internetPackages: List<InternetPackage
         ) {
             items(internetPackages, key = { it }) { internetPackage ->
                 Surface(
-                    modifier = Modifier.clickable { },
+                    modifier = Modifier.clickable { onBuyInternetPackage(internetPackage) },
                     color = MaterialTheme.colors.surface,
                     shape = MaterialTheme.shapes.medium,
                     elevation = dimensionResource(id = R.dimen.default_elevation),
@@ -333,3 +365,9 @@ private fun AdditionalInternetPackageList(internetPackages: List<InternetPackage
         }
     }
 }
+
+private data class ConfirmationDialogData(
+    val name: String,
+    val number: String,
+    val onConfirm: () -> Unit,
+)

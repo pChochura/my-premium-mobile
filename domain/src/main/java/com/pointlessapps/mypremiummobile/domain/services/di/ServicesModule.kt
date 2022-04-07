@@ -2,10 +2,7 @@ package com.pointlessapps.mypremiummobile.domain.services.di
 
 import com.pointlessapps.mypremiummobile.domain.services.ServicesRepository
 import com.pointlessapps.mypremiummobile.domain.services.ServicesRepositoryImpl
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetInternetPackageStatusUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetInternetPackagesUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserOfferUseCase
-import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
+import com.pointlessapps.mypremiummobile.domain.services.usecase.*
 import org.koin.dsl.module
 
 internal val servicesModule = module {
@@ -35,6 +32,12 @@ internal val servicesModule = module {
 
     factory {
         GetInternetPackagesUseCase(
+            servicesRepository = get(),
+        )
+    }
+
+    factory {
+        BuyInternetPackageUseCase(
             servicesRepository = get(),
         )
     }

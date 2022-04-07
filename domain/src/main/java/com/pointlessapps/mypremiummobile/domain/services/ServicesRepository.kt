@@ -18,6 +18,8 @@ interface ServicesRepository {
     fun getInternetPackageStatus(phoneNumberId: String): Flow<InternetPackageStatusResponse>
 
     fun getInternetPackages(phoneNumberId: String): Flow<List<InternetPackageResponse>>
+
+    fun buyInternetPackage(phoneNumberId: String, packageId: Int): Flow<Unit>
 }
 
 internal class ServicesRepositoryImpl(
@@ -38,5 +40,9 @@ internal class ServicesRepositoryImpl(
 
     override fun getInternetPackages(phoneNumberId: String) = flow {
         emit(servicesDatasource.getInternetPackages(phoneNumberId))
+    }.flowOn(Dispatchers.IO)
+
+    override fun buyInternetPackage(phoneNumberId: String, packageId: Int): Flow<Unit> = flow {
+        emit(servicesDatasource.buyInternetPackage(phoneNumberId, packageId))
     }.flowOn(Dispatchers.IO)
 }

@@ -1,6 +1,7 @@
 package com.pointlessapps.mypremiummobile.remote.datasource.services
 
 import com.pointlessapps.mypremiummobile.datasource.services.ServicesDatasource
+import com.pointlessapps.mypremiummobile.remote.datasource.services.dto.BuyInternetPackageBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.services.mapper.toInternetPackageStatus
 import com.pointlessapps.mypremiummobile.remote.datasource.services.mapper.toInternetPackages
 import com.pointlessapps.mypremiummobile.remote.datasource.services.mapper.toPhoneNumbers
@@ -24,4 +25,12 @@ internal class ServicesDatasourceImpl(
 
     override suspend fun getInternetPackages(phoneNumberId: String) =
         service.getInternetPackages(phoneNumberId).toInternetPackages()
+
+    override suspend fun buyInternetPackage(phoneNumberId: String, packageId: Int) =
+        service.buyInternetPackage(
+            BuyInternetPackageBodyDto(
+                msisdn = phoneNumberId,
+                packageId = packageId,
+            ),
+        )
 }

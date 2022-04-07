@@ -9,6 +9,7 @@ internal val dashboardModule = module {
         DashboardViewModel(
             errorHandler = get(),
             getDashboardModelUseCase = get(),
+            buyInternetPackageUseCase = get(),
         )
     }
 }

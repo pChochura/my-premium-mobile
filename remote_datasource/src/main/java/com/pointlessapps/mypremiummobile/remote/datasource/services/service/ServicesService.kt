@@ -1,10 +1,7 @@
 package com.pointlessapps.mypremiummobile.remote.datasource.services.service
 
 import com.pointlessapps.mypremiummobile.http.authorization.Authorize
-import com.pointlessapps.mypremiummobile.remote.datasource.services.dto.InternetPackageResponseDto
-import com.pointlessapps.mypremiummobile.remote.datasource.services.dto.InternetPackageStatusResponseDto
-import com.pointlessapps.mypremiummobile.remote.datasource.services.dto.PhoneNumberResponseDto
-import com.pointlessapps.mypremiummobile.remote.datasource.services.dto.UserOfferResponseDto
+import com.pointlessapps.mypremiummobile.remote.datasource.services.dto.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -26,4 +23,8 @@ internal interface ServicesService {
     @Authorize
     @POST("services/getPackageList")
     suspend fun getInternetPackages(@Body phoneNumberId: String): List<InternetPackageResponseDto>
+
+    @Authorize
+    @POST("services/addPackage")
+    suspend fun buyInternetPackage(@Body buyInternetPackageBodyDto: BuyInternetPackageBodyDto)
 }
