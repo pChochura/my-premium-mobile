@@ -24,5 +24,6 @@ include(
     ":http",
     ":errors",
     ":datasource",
+    ":local_datasource",
     ":remote_datasource",
 )

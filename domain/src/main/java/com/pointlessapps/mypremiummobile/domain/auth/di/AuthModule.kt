@@ -48,4 +48,16 @@ internal val authModule = module {
             authRepository = get(),
         )
     }
+
+    factory {
+        SaveCredentialsUseCase(
+            authRepository = get(),
+        )
+    }
+
+    factory {
+        GetCredentialsUseCase(
+            authRepository = get(),
+        )
+    }
 }

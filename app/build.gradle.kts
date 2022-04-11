@@ -112,5 +112,6 @@ dependencies {
     implementation(project(":http"))
     implementation(project(":errors"))
     implementation(project(":datasource"))
+    implementation(project(":local_datasource"))
     implementation(project(":remote_datasource"))
 }

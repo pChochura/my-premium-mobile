@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/errors" />
             <option value="$PROJECT_DIR$/http" />
+            <option value="$PROJECT_DIR$/local_datasource" />
             <option value="$PROJECT_DIR$/remote_datasource" />
           </set>
         </option>

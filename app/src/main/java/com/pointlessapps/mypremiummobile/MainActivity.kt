@@ -26,13 +26,11 @@ import com.pointlessapps.mypremiummobile.compose.ui.components.BottomNavigationB
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbar
 import com.pointlessapps.mypremiummobile.compose.ui.components.ComposeSnackbarHostState
 import com.pointlessapps.mypremiummobile.compose.ui.theme.ProjectTheme
+import com.pointlessapps.mypremiummobile.compose.ui.theme.Route
 import dev.olshevski.navigation.reimagined.rememberNavController
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-
-    private val viewModel: MainViewModel by viewModel()
 
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,9 +63,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background,
                     ) {
-                        val navController = rememberNavController(
-                            startDestination = viewModel.getStartDestination(),
-                        )
+                        val navController = rememberNavController<Route>(Route.Login)
                         NavHost(navController = navController)
 
                         if (navController.backstack.entries.last().destination.showNavigationBar) {

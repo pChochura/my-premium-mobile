@@ -2,6 +2,7 @@ package com.pointlessapps.mypremiummobile.domain.auth
 
 import com.pointlessapps.mypremiummobile.datasource.auth.AuthDatasource
 import com.pointlessapps.mypremiummobile.datasource.auth.UserInfoDatasource
+import com.pointlessapps.mypremiummobile.datasource.auth.dto.Credentials
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 interface AuthRepository {
+    fun saveCredentials(login: String, password: String): Flow<Unit>
+
+    fun getCredentials(): Flow<Credentials>
+
     fun isLoggedIn(): Boolean
 
     fun login(login: String, password: String): Flow<UserInfoResponse>
@@ -28,6 +33,14 @@ internal class AuthRepositoryImpl(
     private val authDatasource: AuthDatasource,
     private val userInfoDatasource: UserInfoDatasource,
 ) : AuthRepository {
+
+    override fun saveCredentials(login: String, password: String) = flow {
+        emit(authDatasource.saveCredentials(login, password))
+    }.flowOn(Dispatchers.Default)
+
+    override fun getCredentials() = flow {
+        emit(authDatasource.getCredentials())
+    }.flowOn(Dispatchers.Default)
 
     override fun isLoggedIn() = authDatasource.isLoggedIn()
 

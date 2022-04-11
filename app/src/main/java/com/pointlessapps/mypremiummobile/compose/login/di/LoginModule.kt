@@ -9,6 +9,9 @@ internal val loginModule = module {
         LoginViewModel(
             errorHandler = get(),
             loginUseCase = get(),
+            isLoggedInUseCase = get(),
+            getCredentialsUseCase = get(),
+            saveCredentialsUseCase = get(),
             validateSimpleInputUseCase = get(),
         )
     }
