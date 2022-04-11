@@ -248,7 +248,8 @@ internal class PaymentsViewModel(
             DeliveryMethod(
                 id = it.id,
                 name = it.method,
-                price = it.price.takeIf { number -> numberFormatter.toFloat(number) != 0f },
+                price = it.price.takeIf { number -> numberFormatter.toFloat(number) != 0f }
+                    ?.let { price -> numberFormatter.toFloatString(price) },
                 enabled = it.status,
             )
         }
