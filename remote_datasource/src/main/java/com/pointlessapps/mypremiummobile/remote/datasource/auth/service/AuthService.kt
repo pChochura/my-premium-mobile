@@ -4,6 +4,7 @@ import com.pointlessapps.mypremiummobile.http.authorization.AUTHORIZATION_HEADER
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.*
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
@@ -14,8 +15,10 @@ internal interface AuthService {
         @Body loginBodyDto: LoginBodyDto,
     ): LoginResponseDto
 
-    @POST("auth/logout")
-    suspend fun logout()
+    @GET("auth/logout")
+    suspend fun logout(
+        @Header(AUTHORIZATION_HEADER) authHeader: String,
+    )
 
     @POST("auth/refreshToken")
     suspend fun refreshToken(

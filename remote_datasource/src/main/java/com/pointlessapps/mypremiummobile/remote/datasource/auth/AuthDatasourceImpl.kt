@@ -5,6 +5,7 @@ import com.pointlessapps.mypremiummobile.datasource.auth.AuthorizationTokenStore
 import com.pointlessapps.mypremiummobile.datasource.auth.CredentialsStore
 import com.pointlessapps.mypremiummobile.datasource.auth.dto.UserInfoResponse
 import com.pointlessapps.mypremiummobile.errors.AuthorizationTwoFactorException
+import com.pointlessapps.mypremiummobile.http.authorization.AUTHORIZATION_BEARER
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.LoginBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.ValidateCodeBodyDto
 import com.pointlessapps.mypremiummobile.remote.datasource.auth.dto.VerificationCodeBodyDto
@@ -26,7 +27,6 @@ internal class AuthDatasourceImpl(
 
     @Throws(AuthorizationTwoFactorException::class)
     override suspend fun login(login: String, password: String): UserInfoResponse {
-        println("LOG!, logging In: $login, $password")
         val loginResponse = authService.login(
             LoginBodyDto(
                 username = login,
@@ -43,8 +43,10 @@ internal class AuthDatasourceImpl(
         return loginResponse.toUserInfoResponse()
     }
 
-    override suspend fun logout() = authService.logout()
-        .also { authorizationTokenStore.setToken(null) }
+    override suspend fun logout() = authService.logout(
+        authHeader = "$AUTHORIZATION_BEARER ${authorizationTokenStore.getAuthToken()}",
+    ).also { authorizationTokenStore.setToken(null) }
+        .also { credentialsStore.clear() }
 
     override suspend fun sendVerificationCode() = authService.sendVerificationCode(
         verificationCodeBodyDto = VerificationCodeBodyDto(

@@ -57,7 +57,13 @@
 	<string name="payment_date">Payment date:</string>
 	<string name="posting_date">Posting date:</string>
 	<string name="buy">buy</string>
-	<string name="succesfully_bought_internet_package">You succesfully bought an internet package</string>
+	<string name="successfully_bought_internet_package">You successfully bought an internet package</string>
 	<string name="no_invoices">No invoices</string>
 	<string name="no_payments">No payments</string>
+	<string name="current">Current:</string>
+	<string name="change_login">Change login</string>
+	<string name="change_password">Change password</string>
+	<string name="notification_method">Notification method</string>
+	<string name="two_factor_authentication">Two factor authentication</string>
+	<string name="logout">Logout</string>
 </resources>

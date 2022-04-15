@@ -161,7 +161,7 @@ internal class DashboardViewModel(
                 state = state.copy(isLoading = false)
 
                 eventChannel.send(
-                    DashboardEvent.ShowMessage(R.string.succesfully_bought_internet_package),
+                    DashboardEvent.ShowMessage(R.string.successfully_bought_internet_package),
                 )
             }
             .catch { throwable ->

@@ -7,6 +7,7 @@ import com.pointlessapps.mypremiummobile.compose.dashboard.ui.DashboardScreen
 import com.pointlessapps.mypremiummobile.compose.login.two.factor.ui.LoginTwoFactorScreen
 import com.pointlessapps.mypremiummobile.compose.login.ui.LoginScreen
 import com.pointlessapps.mypremiummobile.compose.payments.ui.PaymentsScreen
+import com.pointlessapps.mypremiummobile.compose.settings.ui.SettingsScreen
 import com.pointlessapps.mypremiummobile.compose.ui.theme.Route
 import dev.olshevski.navigation.reimagined.*
 
@@ -46,8 +47,20 @@ internal fun NavHost(navController: NavController<Route>) {
                 onShowPayments = {
                     navController.navigateIfPossible(Route.Payments)
                 },
+                onShowSettings = {
+                    navController.navigateIfPossible(Route.Settings)
+                },
             )
             Route.Payments -> PaymentsScreen(
+                onShowLogin = {
+                    navController.popAll()
+                    navController.navigate(Route.Login)
+                },
+                onShowSettings = {
+                    navController.navigateIfPossible(Route.Settings)
+                },
+            )
+            Route.Settings -> SettingsScreen(
                 onShowLogin = {
                     navController.popAll()
                     navController.navigate(Route.Login)

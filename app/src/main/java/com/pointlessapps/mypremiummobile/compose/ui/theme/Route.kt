@@ -34,4 +34,7 @@ internal sealed class Route : Parcelable {
 
     @Parcelize
     object Help : Route()
+
+    @Parcelize
+    object Settings : Route()
 }

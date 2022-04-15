@@ -18,7 +18,10 @@ import com.pointlessapps.mypremiummobile.R
 import com.pointlessapps.mypremiummobile.compose.model.UserInfo
 
 @Composable
-internal fun TopBar(userInfo: UserInfo) {
+internal fun TopBar(
+    userInfo: UserInfo,
+    onSettingsClicked: (() -> Unit)? = null,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colors.background,
@@ -63,20 +66,22 @@ internal fun TopBar(userInfo: UserInfo) {
                     ),
                 )
             }
-            Box(
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.icon_button_size))
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colors.surface)
-                    .clickable { },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.icon_size)),
-                    painter = painterResource(id = R.drawable.ic_settings),
-                    tint = colorResource(id = R.color.accent),
-                    contentDescription = null,
-                )
+            if (onSettingsClicked != null) {
+                Box(
+                    modifier = Modifier
+                        .size(dimensionResource(id = R.dimen.icon_button_size))
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colors.surface)
+                        .clickable(onClick = onSettingsClicked),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.icon_size)),
+                        painter = painterResource(id = R.drawable.ic_settings),
+                        tint = colorResource(id = R.color.accent),
+                        contentDescription = null,
+                    )
+                }
             }
         }
     }

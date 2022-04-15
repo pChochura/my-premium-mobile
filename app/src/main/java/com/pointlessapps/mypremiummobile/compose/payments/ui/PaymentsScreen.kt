@@ -37,6 +37,7 @@ private const val MAX_ITEMS_DISPLAYED = 3
 internal fun PaymentsScreen(
     viewModel: PaymentsViewModel = getViewModel(),
     onShowLogin: () -> Unit,
+    onShowSettings: () -> Unit,
 ) {
     var confirmationDialogData by remember { mutableStateOf<ConfirmationDialogData?>(null) }
     val snackbarHost = LocalSnackbarHostState.current
@@ -90,7 +91,7 @@ internal fun PaymentsScreen(
     ComposeLoader(enabled = viewModel.state.isLoading)
 
     ComposeScaffoldLayout(
-        topBar = { TopBar(viewModel.state.userInfo) },
+        topBar = { TopBar(viewModel.state.userInfo, onShowSettings) },
     ) { padding ->
         Column(
             modifier = Modifier

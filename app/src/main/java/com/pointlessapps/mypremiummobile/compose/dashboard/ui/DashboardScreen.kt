@@ -34,6 +34,7 @@ internal fun DashboardScreen(
     viewModel: DashboardViewModel = getViewModel(),
     onShowLogin: () -> Unit,
     onShowPayments: () -> Unit,
+    onShowSettings: () -> Unit,
 ) {
     var confirmationDialogData by remember { mutableStateOf<ConfirmationDialogData?>(null) }
     val snackbarHost = LocalSnackbarHostState.current
@@ -77,7 +78,7 @@ internal fun DashboardScreen(
     ComposeLoader(enabled = viewModel.state.isLoading)
 
     ComposeScaffoldLayout(
-        topBar = { TopBar(viewModel.state.userInfo) },
+        topBar = { TopBar(viewModel.state.userInfo, onShowSettings) },
     ) { padding ->
         Column(
             modifier = Modifier

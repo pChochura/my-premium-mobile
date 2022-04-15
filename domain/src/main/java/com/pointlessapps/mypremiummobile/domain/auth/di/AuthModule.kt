@@ -20,6 +20,12 @@ internal val authModule = module {
     }
 
     factory {
+        LogoutUseCase(
+            authRepository = get(),
+        )
+    }
+
+    factory {
         IsLoggedInUseCase(
             authRepository = get(),
         )

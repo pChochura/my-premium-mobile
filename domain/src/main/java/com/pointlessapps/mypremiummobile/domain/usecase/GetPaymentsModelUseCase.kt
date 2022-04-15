@@ -8,7 +8,6 @@ import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentAmoun
 import com.pointlessapps.mypremiummobile.domain.payments.usecase.GetPaymentsUseCase
 import com.pointlessapps.mypremiummobile.domain.services.usecase.GetUserPhoneNumbersUseCase
 import com.pointlessapps.mypremiummobile.domain.utils.combine
-import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 class GetPaymentsModelUseCase(
@@ -28,25 +27,23 @@ class GetPaymentsModelUseCase(
         }.time
     }
 
-    operator fun invoke(): Flow<PaymentsModel> {
-        return combine(
-            getUserPhoneNumbersUseCase(),
-            getUserNameUseCase(),
-            getPaymentAmountUseCase(),
-            getInvoicesUseCase(threeMonthsAgo, today),
-            getPaymentsUseCase(threeMonthsAgo, today),
-            getDeliveryMethodsUseCase(),
-        ) { phoneNumbers, userInfo, paymentAmount, invoices, payments, deliveryMethods ->
-            val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain })
+    operator fun invoke() = combine(
+        getUserPhoneNumbersUseCase(),
+        getUserNameUseCase(),
+        getPaymentAmountUseCase(),
+        getInvoicesUseCase(threeMonthsAgo, today),
+        getPaymentsUseCase(threeMonthsAgo, today),
+        getDeliveryMethodsUseCase(),
+    ) { phoneNumbers, userInfo, paymentAmount, invoices, payments, deliveryMethods ->
+        val phoneNumber = requireNotNull(phoneNumbers.find { it.isMain })
 
-            return@combine PaymentsModel(
-                phoneNumber = phoneNumber,
-                userInfo = userInfo,
-                paymentAmount = paymentAmount,
-                invoices = invoices,
-                payments = payments,
-                deliveryMethods = deliveryMethods,
-            )
-        }
+        return@combine PaymentsModel(
+            phoneNumber = phoneNumber,
+            userInfo = userInfo,
+            paymentAmount = paymentAmount,
+            invoices = invoices,
+            payments = payments,
+            deliveryMethods = deliveryMethods,
+        )
     }
 }
