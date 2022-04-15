@@ -14,7 +14,7 @@
 	<string name="toggle_password_visibility">Toggle password visibility</string>
 	<string name="show_payments_details">Show payments details</string>
 	<string name="account_balance">Account balance</string>
-	<string name="amount_value">%s zł</string>
+	<string name="amount_value" translatable="false">%s zł</string>
 	<string name="billing_period">Billing period</string>
 	<string name="account_number">Account number</string>
 	<string name="billing_period_value">%s. day of the month</string>
@@ -23,10 +23,10 @@
 	<string name="tariff">Tariff</string>
 	<string name="calls_to_mobile">Calls to mobile phones</string>
 	<string name="calls_to_landline">Calls to landline</string>
-	<string name="sms">SMS</string>
-	<string name="mms">MMS</string>
-	<string name="internet">Internet</string>
-	<string name="internet_status">%.2f GB / %.0f GB</string>
+	<string name="sms" translatable="false">SMS</string>
+	<string name="mms" translatable="false">MMS</string>
+	<string name="internet" translatable="false">Internet</string>
+	<string name="internet_status" translatable="false">%.2f GB / %.0f GB</string>
 	<string name="additional_internet_package">Additional internet package</string>
 	<string name="dashboard">Dashboard</string>
 	<string name="payments">Payments</string>
