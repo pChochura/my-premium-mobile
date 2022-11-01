@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.pointlessapps.mypremiummobile",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 22,
+      "versionName": "untagged-7c4fd4f-dirty",
+      "outputFile": "com.pointlessapps.mypremiummobile_untagged-7c4fd4f-dirty_22.apk"
+    }
+  ],
+  "elementType": "File"
+}

@@ -21,8 +21,8 @@ class GetPaymentsModelUseCase(
 
     companion object {
         private const val THREE_MONTHS = 3
-        private val today = Calendar.getInstance().time
-        private val threeMonthsAgo = Calendar.getInstance().apply {
+        private val today get() = Calendar.getInstance().time
+        private val threeMonthsAgo get() = Calendar.getInstance().apply {
             add(Calendar.MONTH, -THREE_MONTHS)
         }.time
     }

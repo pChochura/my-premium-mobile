@@ -20,7 +20,6 @@
             <option value="$PROJECT_DIR$/remote_datasource" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

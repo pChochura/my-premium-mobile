@@ -37,6 +37,7 @@ dependencies {
     implementation(Koin.core)
     implementation(Kotlin.Coroutines.core)
 
+    implementation(AndroidX.core)
     implementation(AndroidX.annotations)
 
     implementation(Retrofit.dependency)

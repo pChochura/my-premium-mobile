@@ -50,9 +50,13 @@ internal fun PaymentsScreen(
                 is PaymentsEvent.ShowErrorMessage ->
                     snackbarHost.showSnackbar(event.message)
                 is PaymentsEvent.OpenFile -> context.startActivity(
-                    Intent(Intent.ACTION_VIEW, event.uri).apply {
-                        type = "application/pdf"
-                    },
+                    Intent.createChooser(
+                        Intent(Intent.ACTION_VIEW, event.uri).apply {
+                            type = "application/pdf"
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        },
+                        context.getString(R.string.open_a_pdf),
+                    ),
                 )
                 is PaymentsEvent.OpenUrl -> context.startActivity(
                     Intent(Intent.ACTION_VIEW, event.uri),

@@ -1,8 +1,7 @@
 package com.pointlessapps.mypremiummobile.remote.datasource.payments
 
 import android.content.Context
-import android.net.Uri
-import android.os.Environment
+import androidx.core.content.FileProvider
 import com.pointlessapps.mypremiummobile.datasource.payments.PaymentsDatasource
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.BalanceResponse
 import com.pointlessapps.mypremiummobile.datasource.payments.dto.DeliveryMethodResponse
@@ -19,6 +18,7 @@ import com.pointlessapps.mypremiummobile.remote.datasource.payments.service.Paym
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,7 +73,7 @@ internal class PaymentsDatasourceImpl(
             ?.substringBefore(FILE_EXTENSION) ?: throw NullPointerException()
 
         val body = invoiceResponse.body() ?: throw NullPointerException()
-        return saveFile(filename, body.bytes())
+        return saveFile(filename, body.byteStream())
     }
 
     @Throws(NullPointerException::class)
@@ -88,18 +88,26 @@ internal class PaymentsDatasourceImpl(
             ?.substringBefore(FILE_EXTENSION) ?: throw NullPointerException()
 
         val body = billingResponse.body() ?: throw NullPointerException()
-        return saveFile(filename, body.bytes())
+        return saveFile(filename, body.byteStream())
     }
 
     @Throws(NullPointerException::class)
-    private fun saveFile(filename: String, bytes: ByteArray): String {
+    private fun saveFile(filename: String, input: InputStream): String {
         val downloadedFile = File(
-            "${context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.path}${File.separator}" +
-                    "$filename$FILE_EXTENSION",
+            context.externalCacheDir?.absolutePath ?: context.cacheDir.absolutePath,
+            "$filename$FILE_EXTENSION",
         )
 
-        downloadedFile.writeBytes(bytes)
-        return Uri.fromFile(downloadedFile).path ?: throw NullPointerException()
+        downloadedFile.outputStream().use { output ->
+            input.copyTo(output)
+        }
+        input.close()
+
+        return FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",
+            downloadedFile,
+        )?.path ?: throw NullPointerException()
     }
 
     override suspend fun getPayWithPayUUrl(amount: Float) =
